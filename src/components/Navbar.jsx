@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Heart, Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function Navbar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 w-full">
-
           {/* Left: Logo */}
           <div className="flex items-center space-x-2 flex-1">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-50 rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+              <Heart className="w-5 h-5 text-white"  onClick={() => navigate("/")}/>
             </div>
             <span className="text-xl font-medium text-gray-900">GenMillenauts</span>
           </div>
@@ -35,11 +36,33 @@ export function Navbar() {
 
           {/* Right: Actions */}
           <div className="flex items-center justify-end space-x-4 flex-1">
-            <button className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-gray-700 hover:bg-gray-100 transition">
+            {/* 👇 Added Login Button */}
+            <button
+              className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-gray-700 hover:bg-gray-100 transition"
+              onClick={() => navigate("/login")}
+            >
+              Log In
+            </button>
+
+            <button
+              className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-gray-700 hover:bg-gray-100 transition"
+              onClick={() => navigate("/signup")}
+            >
               Sign In
             </button>
-            <button className="px-4 py-2 rounded-md bg-gradient-to-r from-blue-500 to-blue-300 text-white hover:opacity-90 transition">
-              Get Started
+
+            <button
+              className="hidden sm:inline-flex px-3 py-1.5 rounded-md text-gray-700 hover:bg-gray-100 transition"
+              onClick={() => navigate("/therapist/signup")}
+            >
+              T-Sign
+            </button>
+
+            <button
+              className="px-4 py-2 rounded-md bg-gradient-to-r from-blue-500 to-blue-300 text-white hover:opacity-90 transition"
+              onClick={() => navigate("/therapist/login")}
+            >
+              T-Login
             </button>
 
             {/* Mobile Menu Button */}
@@ -67,6 +90,34 @@ export function Navbar() {
             <a href="#about" className="block text-gray-700 hover:text-gray-900">
               About
             </a>
+            {/* 👇 Add mobile login + signup buttons */}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                navigate("/login");
+              }}
+              className="block w-full text-left text-gray-700 hover:text-gray-900"
+            >
+              Log In
+            </button>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                navigate("/signup");
+              }}
+              className="block w-full text-left text-gray-700 hover:text-gray-900"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                navigate("/therapist/signup");
+              }}
+              className="block w-full text-left text-gray-700 hover:text-gray-900"
+            >
+              Therapist Login
+            </button>
           </div>
         )}
       </div>
