@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { loginTherapist } from "../services/therapistService";
+import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { authSuccess } from "../redux/slices/authSlice";
 
 export default function TherapistLoginPage() {
   const [formData, setFormData] = useState({
@@ -10,11 +13,17 @@ export default function TherapistLoginPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -26,12 +35,11 @@ export default function TherapistLoginPage() {
 
       if (res.success) {
         toast.success(res.message || "Login successful!");
-
-         localStorage.setItem("token", res.token);
-      localStorage.setItem("role", res.role); 
+        dispatch(authSuccess({ token: res.token, role: res.role }));
         navigate("/therapist/dashboard");
       } else {
         toast.error(res.message || "Invalid credentials");
+        navigate("/therapist/login");
       }
     } catch (error) {
       const msg =
@@ -39,6 +47,7 @@ export default function TherapistLoginPage() {
         error.message ||
         "Login failed. Try again.";
       toast.error(msg);
+      navigate("/therapist/login");
     } finally {
       setLoading(false);
     }
@@ -60,15 +69,27 @@ export default function TherapistLoginPage() {
             required
           />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none"
-            required
-          />
+          <div className="relative w-full">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none pr-10"
+              required
+            />
+            <div
+              className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? (
+                <EyeOff size={20} className="text-gray-400" />
+              ) : (
+                <Eye size={20} className="text-gray-400" />
+              )}
+            </div>
+          </div>
 
           <button
             type="submit"

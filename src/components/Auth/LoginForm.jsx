@@ -1,13 +1,19 @@
 // src/components/Auth/LoginForm.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuthApi } from "../../hooks/useAuthApi";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const { register, handleSubmit } = useForm();
   const { handleLogin, loading } = useAuthApi();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onSubmit = async (data) => {
     const res = await handleLogin(data.email, data.password);
@@ -32,13 +38,21 @@ export default function LoginForm() {
         className="w-full mb-3 p-2 border rounded-md"
       />
 
-      <input
-        type="password"
-        placeholder="Password"
-        {...register("password", { required: true })}
-        disabled={loading}
-        className="w-full mb-3 p-2 border rounded-md"
-      />
+      <div className="relative w-full mb-3">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          {...register("password", { required: true })}
+          disabled={loading}
+          className="w-full p-2 border rounded-md pr-10"
+        />
+        <div
+          className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+          onClick={togglePasswordVisibility}
+        >
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </div>
+      </div>
 
       <button
         type="submit"

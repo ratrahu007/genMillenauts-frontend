@@ -1,5 +1,5 @@
-// src/redux/slices/authSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { updateUser as updateUserService } from "../../services/authService";
 
 const savedAuth = localStorage.getItem("auth")
   ? JSON.parse(localStorage.getItem("auth"))
@@ -12,6 +12,19 @@ const initialState = {
   loading: false,
   error: null,
 };
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (userData, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().auth;
+      const response = await updateUserService(token, userData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -31,24 +44,55 @@ const authSlice = createSlice({
       state.user = user;
       localStorage.setItem("auth", JSON.stringify({ token, role, user }));
     },
+    updateUserSuccess: (state, action) => {
+      state.user = action.payload;
+      state.loading = false;
+      const savedAuth = JSON.parse(localStorage.getItem("auth"));
+      savedAuth.user = action.payload;
+      localStorage.setItem("auth", JSON.stringify(savedAuth));
+    },
     setError: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
-    logout: () => {
+    logout: (state) => {
       localStorage.removeItem("auth");
-      return {
-        user: null,
-        token: null,
-        role: null,
-        loading: false,
-        error: null,
-      };
+      state.user = null;
+      state.token = null;
+      state.role = null;
+      state.loading = false;
+      state.error = null;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+        const savedAuth = JSON.parse(localStorage.getItem("auth"));
+        savedAuth.user = action.payload;
+        localStorage.setItem("auth", JSON.stringify(savedAuth));
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { startLoading, resetLoading, authSuccess, setError, logout } =
-  authSlice.actions;
+export const {
+  startLoading,
+  resetLoading,
+  authSuccess,
+  setError,
+  logout,
+  updateUserSuccess,
+} = authSlice.actions;
+
+export const selectUser = (state) => state.auth.user;
 
 export default authSlice.reducer;

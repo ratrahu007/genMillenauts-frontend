@@ -1,5 +1,11 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import FeatureSection from "./components/FeatureSection";
@@ -7,7 +13,7 @@ import TherapistSection from "./components/TherapistSection";
 import CommunitySection from "./components/CommunitySection";
 import AiCheckInSection from "./components/AiCheckInSection";
 import Footer from "./components/Footer";
-import SignupPage from "./pages/signUpPage";
+import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import DashboardPage from "./pages/DashBoardPage";
@@ -18,15 +24,65 @@ import TherapistLoginPage from "./pages/TherapistLoginPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // ✅ Required import
 import { Toaster } from "sonner";
+import SettingsPage from "./pages/SettingsPage";
+import { useDispatch, useSelector } from "react-redux";
+import { analyzeStress } from "./redux/slices/stressSlice";
+import { authSuccess } from "./redux/slices/authSlice";
 
-
-
+import AddAlertContactPage from "./pages/AddAlertContactPage";
+import AlertContactsPage from "./pages/AlertContactsPage";
 
 function App() {
+  const dispatch = useDispatch();
+  const { token, role } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      dispatch(authSuccess(JSON.parse(auth)));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    let interval;
+    if (token) {
+      interval = setInterval(() => {
+        dispatch(analyzeStress());
+      }, 2 * 60 * 1000); // 2 minutes
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [dispatch, token]);
+
   return (
     <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
 
-        <Toaster richColors position="top-center" />
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { token, role } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token && location.pathname === "/") {
+      if (role === "THERAPIST") {
+        navigate("/therapist/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+    }
+  }, [token, role, navigate, location]);
+
+  return (
+    <>
+      <Toaster richColors position="top-center" />
       <Navbar />
 
       <Routes>
@@ -40,20 +96,21 @@ function App() {
               <TherapistSection />
               <CommunitySection />
               <AiCheckInSection />
-              <Footer />
             </>
           }
         />
-       
+
         {/* User Authentication */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Therapist Authentication */}
         <Route path="/therapist/signup" element={<TherapistSignupPage />} />
-        <Route path="/therapist/register" element={<TherapistRegisterPage />} />
+        <Route
+          path="/therapist/register"
+          element={<TherapistRegisterPage />}
+        />
         <Route path="/therapist/login" element={<TherapistLoginPage />} />
-
 
         {/* Protected Routes */}
         <Route
@@ -61,6 +118,30 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-alert-contact"
+          element={
+            <ProtectedRoute>
+              <AddAlertContactPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/alert-contacts"
+          element={
+            <ProtectedRoute>
+              <AlertContactsPage />
             </ProtectedRoute>
           }
         />
@@ -73,7 +154,8 @@ function App() {
           }
         />
       </Routes>
-       <ToastContainer
+      <Footer />
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -83,9 +165,7 @@ function App() {
         draggable
         theme="colored"
       />
-
-    </BrowserRouter>
+    </>
   );
 }
-
 export default App;

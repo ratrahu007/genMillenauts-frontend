@@ -46,3 +46,17 @@ export const loginUser = async (email, password) => {
   );
   return response.data;
 };
+
+export const updateUser = async (token, userData) => {
+  const response = await axios.put(
+    "http://localhost:8080/api/users/me",
+    userData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
