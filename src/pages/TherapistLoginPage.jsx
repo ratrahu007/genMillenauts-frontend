@@ -1,21 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { loginTherapist } from "../services/therapistService";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { authSuccess } from "../redux/slices/authSlice";
+import { useTherapistApi } from "../hooks/useTherapistApi";
 
 export default function TherapistLoginPage() {
   const [formData, setFormData] = useState({
-    emailOrMobile: "",
+    email: "",
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { loading, handleLogin } = useTherapistApi();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,29 +22,7 @@ export default function TherapistLoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await loginTherapist(formData);
-
-      if (res.success) {
-        toast.success(res.message || "Login successful!");
-        dispatch(authSuccess({ token: res.token, role: res.role }));
-        navigate("/therapist/dashboard");
-      } else {
-        toast.error(res.message || "Invalid credentials");
-        navigate("/therapist/login");
-      }
-    } catch (error) {
-      const msg =
-        error.response?.data?.message ||
-        error.message ||
-        "Login failed. Try again.";
-      toast.error(msg);
-      navigate("/therapist/login");
-    } finally {
-      setLoading(false);
-    }
+    await handleLogin(formData.email, formData.password);
   };
 
   return (
@@ -61,9 +33,9 @@ export default function TherapistLoginPage() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="emailOrMobile"
-            placeholder="Email or Mobile"
-            value={formData.emailOrMobile}
+            name="email"
+            placeholder="Email"
+            value={formData.email}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none"
             required

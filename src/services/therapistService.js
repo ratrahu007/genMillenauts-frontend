@@ -54,3 +54,15 @@ export const loginTherapist = async (payload) => {
   return response.data;
 };
 
+export const getTherapistProfile = async (token) => {
+  console.log("Request: GET /api/therapists/me");
+  const response = await axios.get(`${API_URL}/me`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Response: GET /api/therapists/me", response.data);
+  return response.data;
+};
+

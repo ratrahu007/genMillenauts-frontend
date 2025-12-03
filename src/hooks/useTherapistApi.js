@@ -5,7 +5,12 @@ import {
   sendTherapistOtp,
   verifyTherapistOtp,
   registerTherapist,
+  getTherapistProfile,
+  loginTherapist,
 } from "../services/therapistService";
+import { useDispatch, useSelector } from "react-redux";
+import { authSuccess } from "../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Custom hook to interact with the therapist authentication API.
@@ -16,16 +21,20 @@ import {
  *   sendOtp: (contact: { email: string, mobile: string }) => Promise<any>,
  *   verifyOtp: (data: { emailOrMobile: string, otp: string }) => Promise<any>,
  *   register: (data: object) => Promise<any>
+ *   getProfile: () => Promise<any>
  * }}
  */
 export const useTherapistApi = () => {
   // useState hook to manage the loading state for all API calls from this hook.
   // This helps in providing visual feedback (e.g., disabling a button) to the user.
   const [loading, setLoading] = useState(false);
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   /**
    * Handles the API call to send an OTP.
-   * @param {{ email: string, mobile: string }} contact - Therapist's contact info.
+   * @param {{ email:.string, mobile: string }} contact - Therapist's contact info.
    */
   const sendOtp = async (contact) => {
     setLoading(true);
@@ -36,8 +45,13 @@ export const useTherapistApi = () => {
       console.log("useTherapistApi: OTP sent response", response);
       return response;
     } catch (error) {
-      console.error("useTherapistApi: Error sending OTP", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Failed to send OTP. Please try again.");
+      console.error(
+        "useTherapistApi: Error sending OTP",
+        error.response?.data || error.message
+      );
+      toast.error(
+        error.response?.data?.message || "Failed to send OTP. Please try again."
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -57,8 +71,13 @@ export const useTherapistApi = () => {
       console.log("useTherapistApi: OTP verification response", response);
       return response;
     } catch (error) {
-      console.error("useTherapistApi: Error verifying OTP", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Invalid OTP. Please try again.");
+      console.error(
+        "useTherapistApi: Error verifying OTP",
+        error.response?.data || error.message
+      );
+      toast.error(
+        error.response?.data?.message || "Invalid OTP. Please try again."
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -70,51 +89,89 @@ export const useTherapistApi = () => {
    * @param {object} data - Therapist's registration details.
    */
   const register = async (data) => {
-  setLoading(true);
-  console.log("useTherapistApi: Registering therapist...", data);
+    setLoading(true);
+    console.log("useTherapistApi: Registering therapist...", data);
 
-  try {
-    // Call backend
-    const res = await registerTherapist(data); 
-    console.log("Backend response:", res);
+    try {
+      // Call backend
+      const res = await registerTherapist(data);
+      console.log("Backend response:", res);
 
-    // Backend ALWAYS sends message
-    const msg = res.message || "Something happened.";
+      // Backend ALWAYS sends message
+      const msg = res.message || "Something happened.";
 
-    if (res.success === true) {
-      // SUCCESS
-      toast.success(msg);
-      return res;
-    } 
-    
-    if (res.success === false) {
-      // BACKEND FAILURE (like 'Email already registered')
+      if (res.success === true) {
+        // SUCCESS
+        toast.success(msg);
+        return res;
+      }
+
+      if (res.success === false) {
+        // BACKEND FAILURE (like 'Email already registered')
+        toast.error(msg);
+        throw new Error(msg);
+      }
+
+      // If backend gave unexpected shape
       toast.error(msg);
       throw new Error(msg);
+    } catch (error) {
+      // Axios error OR backend returned 4xx error JSON
+      const msg =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong.";
+
+      toast.error(msg);
+      console.error("Therapist Register Error:", msg);
+      throw error;
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // If backend gave unexpected shape
-    toast.error(msg);
-    throw new Error(msg);
+  const getProfile = async () => {
+    setLoading(true);
+    try {
+      const response = await getTherapistProfile(token);
+      return response;
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to fetch profile."
+      );
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (error) {
-    // Axios error OR backend returned 4xx error JSON
-    const msg =
-      error.response?.data?.message ||
-      error.message ||
-      "Something went wrong.";
-
-    toast.error(msg);
-    console.error("Therapist Register Error:", msg);
-    throw error;
-
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const handleLogin = async (email, password) => {
+    setLoading(true);
+    try {
+      const loginResponse = await loginTherapist({ email, password });
+      const token = loginResponse.token;
+      if (token) {
+        const profileResponse = await getTherapistProfile(token);
+        toast.success("Login successful!");
+        dispatch(
+          authSuccess({
+            token: token,
+            role: 'therapist',
+            user: profileResponse,
+          })
+        );
+        navigate("/therapist/dashboard");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Invalid email or password."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // The hook returns an object containing the loading state and the API functions.
   // This allows components to easily access them.
-  return { loading, sendOtp, verifyOtp, register };
+  return { loading, sendOtp, verifyOtp, register, getProfile, handleLogin };
 };

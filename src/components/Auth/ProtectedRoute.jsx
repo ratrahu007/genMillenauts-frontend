@@ -1,23 +1,40 @@
 // src/components/Auth/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
+import { jwtDecode } from "../../utils/jwt";
+import { logout } from "../../redux/slices/authSlice";
 
 export default function ProtectedRoute({ children, requiredRole }) {
-  // USER auth (Redux)
   const { token, role: userRole } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  // Determine the correct login path
-  const loginPath = requiredRole === "THERAPIST" ? "/therapist/login" : "/login";
+  const loginPath =
+    requiredRole === "THERAPIST" ? "/therapist/login" : "/login";
 
-  // 🔒 If no token at all → BLOCK
   if (!token) {
     toast.error("You must be logged in to view this page.");
     return <Navigate to={loginPath} replace />;
   }
 
-  // 🔐 If a specific role is required → check it
+  // Check for token expiration
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decodedToken.exp < currentTime) {
+      dispatch(logout());
+      toast.error("Your session has expired. Please log in again.");
+      return <Navigate to={loginPath} replace />;
+    }
+  } catch (error) {
+    // Handle potential decoding errors (e.g., invalid token)
+    dispatch(logout());
+    toast.error("Invalid session. Please log in again.");
+    return <Navigate to={loginPath} replace />;
+  }
+
   if (requiredRole && userRole !== requiredRole) {
     toast.error("You do not have permission to access this page.");
     return <Navigate to={loginPath} replace />;

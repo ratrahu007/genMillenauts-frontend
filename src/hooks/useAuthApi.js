@@ -1,7 +1,7 @@
 // src/hooks/useAuthApi.js
 import { useDispatch, useSelector } from "react-redux";
 import { startLoading, resetLoading, setError,authSuccess } from "../redux/slices/authSlice";
-import { sendOtp, verifyOtp, registerUser,loginUser } from "../services/authService";
+import { sendOtp, verifyOtp as verifyOtpService, registerUser,loginUser } from "../services/authService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -35,12 +35,13 @@ export const useAuthApi = () => {
     }
   };
 
-  const handleVerifyOtp = async (email, otp) => {
+  const verifyOtp = async (data) => {
+    const { emailOrMobile, otp } = data;
     try {
       dispatch(startLoading());
-      const data = await verifyOtp(email, otp);
-      const success = data?.success === true;
-      const message = data?.message || "OTP verification failed";
+      const responseData = await verifyOtpService(emailOrMobile, otp);
+      const success = responseData?.success === true;
+      const message = responseData?.message || "OTP verification failed";
       if (success) toast.success(message);
       else toast.error(message);
       return { success, message };
@@ -131,7 +132,7 @@ export const useAuthApi = () => {
   };
 
 
-  return { handleSendOtp, handleVerifyOtp, handleRegister, loading ,handleLogin,
+  return { handleSendOtp, verifyOtp, handleRegister, loading ,handleLogin,
 
   };
 };

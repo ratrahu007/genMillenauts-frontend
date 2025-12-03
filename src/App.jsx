@@ -31,11 +31,12 @@ import { authSuccess } from "./redux/slices/authSlice";
 
 import AddAlertContactPage from "./pages/AddAlertContactPage";
 import AlertContactsPage from "./pages/AlertContactsPage";
+import TherapistSlotsPage from "./pages/TherapistSlotsPage";
 
 function App() {
   const dispatch = useDispatch();
   const { token, role } = useSelector((state) => state.auth);
-
+-
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     if (auth) {
@@ -72,7 +73,7 @@ function AppContent() {
 
   useEffect(() => {
     if (token && location.pathname === "/") {
-      if (role === "THERAPIST") {
+      if (role === "therapist") {
         navigate("/therapist/dashboard");
       } else {
         navigate("/dashboard");
@@ -148,8 +149,16 @@ function AppContent() {
         <Route
           path="/therapist/dashboard"
           element={
-            <ProtectedRoute requiredRole="THERAPIST">
+            <ProtectedRoute requiredRole="therapist">
               <TherapistDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/therapist/slots"
+          element={
+            <ProtectedRoute requiredRole="therapist">
+              <TherapistSlotsPage />
             </ProtectedRoute>
           }
         />
