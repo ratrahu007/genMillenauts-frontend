@@ -1,5 +1,5 @@
 // src/hooks/useTherapistApi.js
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import {
   sendTherapistOtp,
@@ -7,6 +7,7 @@ import {
   registerTherapist,
   getTherapistProfile,
   loginTherapist,
+  getAllTherapists,
 } from "../services/therapistService";
 import { useDispatch, useSelector } from "react-redux";
 import { authSuccess } from "../redux/slices/authSlice";
@@ -171,7 +172,22 @@ export const useTherapistApi = () => {
     }
   };
 
+  const fetchAllTherapists = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllTherapists();
+      return response;
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to fetch therapists."
+      );
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // The hook returns an object containing the loading state and the API functions.
   // This allows components to easily access them.
-  return { loading, sendOtp, verifyOtp, register, getProfile, handleLogin };
+  return { loading, sendOtp, verifyOtp, register, getProfile, handleLogin, fetchAllTherapists };
 };

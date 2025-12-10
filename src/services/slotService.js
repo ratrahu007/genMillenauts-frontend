@@ -21,3 +21,15 @@ export const fetchSlots = async (token) => {
   });
   return response.data;
 };
+
+export const getSlotsByTherapistId = async (therapistId) => {
+  const response = await axios.post(`${BASE_URL}/public/fetch`, {
+    therapistId,
+  });
+  return response.data;
+};
+
+export const fetchAllPublicSlots = async () => {
+  const response = await axios.post(`${BASE_URL}/public/fetch`);
+  return response.data;
+};

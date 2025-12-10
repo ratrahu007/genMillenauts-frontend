@@ -32,6 +32,9 @@ import { authSuccess } from "./redux/slices/authSlice";
 import AddAlertContactPage from "./pages/AddAlertContactPage";
 import AlertContactsPage from "./pages/AlertContactsPage";
 import TherapistSlotsPage from "./pages/TherapistSlotsPage";
+import TherapistsPage from "./pages/TherapistsPage";
+import TherapistSlotsBookingPage from "./pages/TherapistSlotsBookingPage";
+import AvailableSlotsPage from "./pages/AvailableSlotsPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -104,6 +107,7 @@ function AppContent() {
         {/* User Authentication */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/slots" element={<AvailableSlotsPage />} />
 
         {/* Therapist Authentication */}
         <Route path="/therapist/signup" element={<TherapistSignupPage />} />
@@ -143,6 +147,22 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <AlertContactsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/therapists"
+          element={
+            <ProtectedRoute>
+              <TherapistsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/therapists/:therapistId/slots"
+          element={
+            <ProtectedRoute>
+              <TherapistSlotsBookingPage />
             </ProtectedRoute>
           }
         />

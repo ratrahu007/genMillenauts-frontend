@@ -4,8 +4,18 @@ import { logout, authSuccess } from "../redux/slices/authSlice";
 import { getLatestStress, getWeeklyStress } from "../redux/slices/stressSlice";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+
 import { getMyProfile } from "../services/userService";
-import { Heart, LogOut, MessageCircle, Calendar, Users, ShieldAlert, ListChecks } from "lucide-react";
+import { getBookingById } from "../services/bookingService";
+
+import {
+  Heart,
+  LogOut,
+  Calendar,
+  Users,
+  ShieldAlert,
+  ListChecks,
+} from "lucide-react";
 
 import WelcomeCard from "../components/dashboard/WelcomeCard";
 import FeatureCard from "../components/dashboard/FeatureCard";
@@ -14,14 +24,21 @@ import WeeklyStressChart from "../components/dashboard/WeeklyStressChart";
 import JournalPrompt from "../components/dashboard/JournalPrompt";
 import MoodTracker from "../components/dashboard/MoodTracker";
 import AiCompanion from "../components/dashboard/AiCompanion";
+import BookingDetails from "../components/dashboard/BookingDetails";
 
 export default function DashboardPage() {
   const { token, user, role } = useSelector((state) => state.auth);
   const { latestStress, weeklyStress } = useSelector((state) => state.stress);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(user);
 
+  const [profile, setProfile] = useState(user);
+  const [booking, setBooking] = useState(null);
+
+  // ---------------------------------------------
+  // ✅ Effect 1 — Fetch profile + stress analytics
+  // ---------------------------------------------
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -32,6 +49,7 @@ export default function DashboardPage() {
       try {
         const data = await getMyProfile(token);
         setProfile(data);
+
         dispatch(authSuccess({ token, role, user: data }));
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -39,22 +57,46 @@ export default function DashboardPage() {
     };
 
     if (!user?.email) fetchProfile();
+
     dispatch(getLatestStress());
     dispatch(getWeeklyStress());
-  }, [token, navigate, dispatch, role, user]);
+  }, [token, user, role, navigate, dispatch]);
 
+  // ---------------------------------------------
+  // ✅ Effect 2 — Fetch booking by bookingId (saved after payment)
+  // ---------------------------------------------
+  useEffect(() => {
+    const fetchBooking = async () => {
+      const bookingId = localStorage.getItem("latestBookingId");
+      if (!bookingId) return;
+
+      try {
+        const data = await getBookingById(token, bookingId);
+        setBooking(data);
+      } catch (err) {
+        console.error("Error fetching booking:", err);
+      }
+    };
+
+    fetchBooking();
+  }, [token]);
+
+  // ---------------------------------------------
+  // Logout handler
+  // ---------------------------------------------
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
 
+  // ---------------------------------------------
+  // Animations
+  // ---------------------------------------------
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.1 },
     },
   };
 
@@ -63,13 +105,13 @@ export default function DashboardPage() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        ease: "easeOut",
-        duration: 0.5,
-      },
+      transition: { ease: "easeOut", duration: 0.5 },
     },
   };
 
+  // ---------------------------------------------
+  // Render UI
+  // ---------------------------------------------
   return (
     <div className="min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
@@ -87,6 +129,7 @@ export default function DashboardPage() {
             Gen<span className="text-blue-500">Millenauts</span>
           </h1>
         </div>
+
         <button
           onClick={handleLogout}
           className="flex items-center space-x-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg shadow-sm transition-colors"
@@ -96,6 +139,7 @@ export default function DashboardPage() {
         </button>
       </motion.header>
 
+      {/* MAIN CONTENT */}
       <motion.main
         variants={containerVariants}
         initial="hidden"
@@ -107,6 +151,13 @@ export default function DashboardPage() {
           <motion.div variants={itemVariants}>
             <WelcomeCard profile={profile} role={role} />
           </motion.div>
+
+          {/* Booking Details */}
+          <motion.div variants={itemVariants}>
+            <BookingDetails booking={booking} />
+          </motion.div>
+
+          {/* Stress Components */}
           <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div variants={itemVariants}>
               <LatestStress latestStress={latestStress} />
@@ -115,9 +166,11 @@ export default function DashboardPage() {
               <WeeklyStressChart weeklyStress={weeklyStress} />
             </motion.div>
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <MoodTracker />
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <AiCompanion />
           </motion.div>
@@ -131,8 +184,10 @@ export default function DashboardPage() {
               title="Book a Session"
               description="Find and schedule with a therapist."
               color="blue"
+              onClick={() => navigate("/therapists")}
             />
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <FeatureCard
               icon={<Users className="w-8 h-8 text-rose-500" />}
@@ -141,6 +196,7 @@ export default function DashboardPage() {
               color="rose"
             />
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <FeatureCard
               icon={<ListChecks className="w-8 h-8 text-indigo-500" />}
@@ -150,6 +206,7 @@ export default function DashboardPage() {
               onClick={() => navigate("/alert-contacts")}
             />
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <FeatureCard
               icon={<ShieldAlert className="w-8 h-8 text-red-500" />}
@@ -159,12 +216,14 @@ export default function DashboardPage() {
               onClick={() => navigate("/add-alert-contact")}
             />
           </motion.div>
+
           <motion.div variants={itemVariants}>
             <JournalPrompt />
           </motion.div>
         </div>
       </motion.main>
-      
+
+      {/* Footer */}
       <footer className="mt-16 text-gray-500 text-sm text-center w-full max-w-7xl mx-auto">
         Made with 💙 by <span className="font-medium text-blue-600">GenMillenauts</span>
       </footer>

@@ -1,3 +1,10 @@
+// src/components/Footer.jsx
+// This component renders the main footer for the website. It is structured into multiple sections:
+// 1. Main Footer: Contains branding, social media links, navigation links for the platform and resources, and contact information.
+// 2. Emergency Banner: A prominent banner with a crisis support hotline and a link to emergency resources.
+// 3. Bottom Bar: Includes the copyright notice and a "Made with love" message.
+// The component is designed to be informative, user-friendly, and visually consistent with the site's theme.
+
 import { 
   Heart, 
   Mail, 
@@ -11,14 +18,15 @@ import {
   Linkedin
 } from "lucide-react";
 
+// Footer component: A comprehensive footer with contact details, links, and emergency information.
 export function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-50 to-blue-50 border-t border-blue-100 font-[Poppins]">
-      {/* Main Footer */}
+      {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           
-          {/* Brand */}
+          {/* Brand Information and Social Links */}
           <div className="lg:col-span-1 space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-sky-400 rounded-lg flex items-center justify-center shadow-sm">
@@ -30,6 +38,7 @@ export function Footer() {
               Building a compassionate mental wellness ecosystem that connects people to care, 
               community, and hope across India.
             </p>
+            {/* Social Media Icons */}
             <div className="flex space-x-3 pt-1">
               {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
                 <button 
@@ -42,7 +51,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Platform Links */}
+          {/* Navigation Links for Platform Features */}
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-800">Platform</h4>
             <div className="space-y-3 text-sm">
@@ -54,7 +63,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Resources */}
+          {/* Links to Resources and Legal Documents */}
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-800">Resources</h4>
             <div className="space-y-3 text-sm">
@@ -66,7 +75,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Contact */}
+          {/* Contact Information and Trust Badges */}
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-800">Get in Touch</h4>
             <div className="space-y-3 text-sm">
@@ -84,7 +93,7 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Trust Badges */}
+            {/* Trust and Compliance Badges */}
             <div className="space-y-2 pt-3">
               <div className="inline-flex items-center text-green-700 bg-green-50 border border-green-200 text-xs px-2 py-1 rounded-md">
                 <Shield className="w-3 h-3 mr-1" />
@@ -99,7 +108,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Emergency Banner */}
+      {/* Emergency Support Banner */}
       <div className="border-t border-blue-100 bg-gradient-to-r from-rose-50 to-orange-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
@@ -116,7 +125,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Copyright and Attribution Bar */}
       <div className="border-t border-blue-100 bg-blue-50/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 text-sm text-gray-600">

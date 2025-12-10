@@ -1,7 +1,15 @@
+// src/components/dashboard/MoodTracker.jsx
+// This component provides an interactive way for users to log their current mood.
+// It displays a set of clickable icons representing different moods (e.g., Sad, Okay, Good, Great).
+// When a user selects a mood, the component provides visual feedback by highlighting the chosen icon
+// and displaying a confirmation message. The component uses Framer Motion to add engaging animations
+// to the mood icons, making the tracking experience more pleasant.
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Smile, Meh, Frown, Star } from "lucide-react";
 
+// An array defining the available moods, each with an icon, label, and color scheme.
 const moods = [
   { icon: Frown, label: "Sad", color: "text-blue-500", bgColor: "bg-blue-100/70" },
   { icon: Meh, label: "Okay", color: "text-amber-500", bgColor: "bg-amber-100/70" },
@@ -9,23 +17,26 @@ const moods = [
   { icon: Star, label: "Great", color: "text-purple-500", bgColor: "bg-purple-100/70" },
 ];
 
+// MoodTracker component: An interactive card for logging daily mood.
 const MoodTracker = () => {
+  // State to keep track of the currently selected mood.
   const [selectedMood, setSelectedMood] = useState(null);
 
   return (
     <motion.div className="bg-white p-6 rounded-xl shadow-md border border-gray-200/80 text-center h-full">
       <h3 className="text-lg font-semibold text-gray-800 mb-5">How are you feeling today?</h3>
       <div className="flex justify-around items-center">
+        {/* Map over the moods array to render a clickable icon for each one. */}
         {moods.map((mood, index) => (
           <motion.div
             key={index}
-            whileHover={{ scale: 1.1, rotate: 3 }}
-            whileTap={{ scale: 0.9, rotate: -3 }}
+            whileHover={{ scale: 1.1, rotate: 3 }} // Animation on hover.
+            whileTap={{ scale: 0.9, rotate: -3 }}   // Animation on click.
             onClick={() => setSelectedMood(mood.label)}
-            className={`p-3 rounded-full cursor-pointer transition-all duration-300 transform-gpu
+            className={`p-3 rounded-full cursor-pointer transition-all duration-300
               ${ selectedMood === mood.label
-                ? `${mood.bgColor} shadow-lg`
-                : "bg-gray-100 hover:bg-gray-200"
+                ? `${mood.bgColor} shadow-lg` // Style for the selected mood.
+                : "bg-gray-100 hover:bg-gray-200" // Default style.
               }`}
           >
             <mood.icon className={`w-10 h-10 transition-colors duration-300 ${
@@ -34,6 +45,7 @@ const MoodTracker = () => {
           </motion.div>
         ))}
       </div>
+      {/* Area to display the confirmation message. */}
       <div className="h-8 mt-4">
         {selectedMood && (
           <motion.p 

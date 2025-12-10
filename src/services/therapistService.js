@@ -66,3 +66,14 @@ export const getTherapistProfile = async (token) => {
   return response.data;
 };
 
+export const getAllTherapists = async () => {
+  console.log("Request: GET /api/therapists/public");
+  const response = await axios.get(`${API_URL}/public`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  console.log("Response: GET /api/therapists/public", response.data);
+  return response.data;
+};
+

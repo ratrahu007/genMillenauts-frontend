@@ -4,3 +4,8 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+@keyframes floatingBlob {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}

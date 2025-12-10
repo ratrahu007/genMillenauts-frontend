@@ -1,3 +1,9 @@
+// src/components/FeatureSection.jsx
+// This component renders the "Features" section of the website, which outlines the core services
+// offered by the platform. It uses a data-driven approach, mapping over an array of feature objects
+// to create a visually consistent and easily maintainable grid of feature cards.
+// Each card highlights a specific service, its benefits, and includes a call to action.
+
 import { 
   Stethoscope, 
   Users, 
@@ -9,6 +15,8 @@ import {
   Heart
 } from "lucide-react";
 
+// An array of objects, where each object defines a key feature of the platform.
+// This includes an icon, title, description, a list of benefits, and a color gradient for styling.
 const features = [
   {
     icon: Stethoscope,
@@ -47,6 +55,7 @@ const features = [
   }
 ];
 
+// FeaturesSection component: Displays the main features as a grid of cards.
 export function FeaturesSection() {
   return (
     <section 
@@ -55,7 +64,7 @@ export function FeaturesSection() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
+        {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <div className="inline-flex items-center bg-gradient-to-r from-gray-200 to-blue-100 text-primary border border-primary/20 px-4 py-2 rounded-full text-sm font-medium">
             <Brain className="w-4 h-4 mr-2" />
@@ -73,22 +82,23 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        {/* Features Grid */}
+        {/* Grid container for the feature cards. */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Mapping over the features array to render each feature card. */}
           {features.map((feature, index) => {
-            const Icon = feature.icon;
+            const Icon = feature.icon; // Dynamically select the icon component.
             return (
               <div 
                 key={index} 
                 className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
               >
                 <div className="relative p-6 space-y-4">
-                  {/* Icon */}
+                  {/* Feature Icon with a dynamic gradient background. */}
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center shadow-lg`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
 
-                  {/* Content */}
+                  {/* Feature Title and Description. */}
                   <div className="space-y-3">
                     <h3 className="text-xl font-medium text-foreground group-hover:text-primary transition-colors font-poppins">
                       {feature.title}
@@ -98,7 +108,7 @@ export function FeaturesSection() {
                     </p>
                   </div>
 
-                  {/* Benefits */}
+                  {/* List of Benefits for the feature. */}
                   <div className="space-y-2">
                     {feature.benefits.map((benefit, i) => (
                       <div key={i} className="flex items-center space-x-2">
@@ -108,21 +118,21 @@ export function FeaturesSection() {
                     ))}
                   </div>
 
-                  {/* Action */}
+                  {/* "Learn More" Button */}
                   <button className="w-full flex justify-between items-center text-primary hover:bg-primary/5 rounded-md px-4 py-2 mt-6 font-medium transition">
                     Learn More
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
 
-                {/* Hover Effect */}
+                {/* Decorative Hover Effect */}
                 <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             );
           })}
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom Call-to-Action / Social Proof */}
         <div className="text-center mt-16">
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-gray-100 to-blue-100 rounded-full px-6 py-3 border border-gray-200 shadow-md">
             <Heart className="w-5 h-5 text-primary" />

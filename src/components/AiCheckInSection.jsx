@@ -1,3 +1,8 @@
+// src/components/AiCheckInSection.jsx
+// This component renders a comprehensive "AI Wellness Companion" section.
+// It showcases a mock AI chat interface, personalized wellness suggestions, a weekly mood tracker,
+// and key features of the AI service, all presented in a visually engaging and modern layout.
+
 import {
   Sparkles,
   Send,
@@ -8,6 +13,7 @@ import {
   MessageCircle
 } from "lucide-react";
 
+// Mock data for the AI chat conversation.
 const chatMessages = [
   { type: "ai", message: "Hi there! I'm here to check in with you. How are you feeling today?", time: "2:30 PM" },
   { type: "user", message: "I've been feeling a bit overwhelmed with work lately. It's hard to focus.", time: "2:31 PM" },
@@ -15,23 +21,26 @@ const chatMessages = [
   { type: "user", message: "I have too many deadlines and I feel like I can't catch up.", time: "2:33 PM" }
 ];
 
+// Mock data for AI-generated personalized content.
 const generatedContent = [
   { title: "Personalized Breathing Exercise", description: "5-minute guided breathing for work stress relief", icon: Lightbulb },
   { title: "Priority Setting Journal", description: "Structured prompts for organizing your tasks", icon: Calendar },
   { title: "Micro-break Reminders", description: "Gentle 2-minute breaks throughout your day", icon: MessageCircle }
 ];
 
+// Mock data for the user's weekly mood trends.
 const moodTrends = [
   { day: "Mon", mood: 6 }, { day: "Tue", mood: 5 }, { day: "Wed", mood: 7 },
   { day: "Thu", mood: 4 }, { day: "Fri", mood: 6 }, { day: "Sat", mood: 8 }, { day: "Sun", mood: 7 }
 ];
 
+// AiCheckInSection component: A feature-rich section for AI-powered wellness check-ins.
 export function AiCheckInSection() {
   return (
     <section className="py-20 bg-gradient-to-b from-gray-100 via-blue-50 to-blue-100 font-[Poppins]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
+        {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <div className="inline-flex items-center bg-gradient-to-r from-blue-200 to-blue-100 text-blue-600 border border-blue-300 rounded-full px-4 py-2">
             <Sparkles className="w-4 h-4 mr-2" />
@@ -50,7 +59,7 @@ export function AiCheckInSection() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           
-          {/* Chat Panel */}
+          {/* Main Chat Panel */}
           <div className="lg:col-span-2">
             <div className="bg-white/60 backdrop-blur-md border border-blue-200 shadow-lg rounded-2xl p-4 float-animation">
               
@@ -65,7 +74,7 @@ export function AiCheckInSection() {
                 </div>
               </div>
 
-              {/* Messages */}
+              {/* Chat Messages Display */}
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {chatMessages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -82,7 +91,7 @@ export function AiCheckInSection() {
                 ))}
               </div>
 
-              {/* Input */}
+              {/* Chat Input Field */}
               <div className="mt-4 flex items-center space-x-3 border-t border-blue-100 pt-3">
                 <input
                   type="text"
@@ -96,10 +105,10 @@ export function AiCheckInSection() {
             </div>
           </div>
 
-          {/* Right Side Tools */}
+          {/* Right Sidebar with Tools and Insights */}
           <div className="space-y-6">
             
-            {/* Personalized Suggestions */}
+            {/* Personalized Suggestions Card */}
             <div className="bg-white/60 backdrop-blur-md border border-blue-200 shadow-md rounded-2xl p-4 float-animation">
               <h4 className="font-semibold text-gray-800 mb-3 flex items-center space-x-2">
                 <Lightbulb className="w-5 h-5 text-blue-500" />
@@ -121,7 +130,7 @@ export function AiCheckInSection() {
               })}
             </div>
 
-            {/* Weekly Mood Chart */}
+            {/* Weekly Mood Chart Card */}
             <div className="bg-white/60 backdrop-blur-md border border-blue-200 shadow-md rounded-2xl p-4 float-animation">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-semibold text-gray-800 flex items-center space-x-2">
@@ -133,11 +142,12 @@ export function AiCheckInSection() {
                 </div>
               </div>
               <div className="flex justify-between items-end h-20">
+                {/* Renders a bar chart based on mood data. */}
                 {moodTrends.map((m, i) => (
                   <div key={i} className="flex flex-col items-center space-y-1">
                     <div
                       className="w-3 bg-gradient-to-t from-blue-400 to-sky-300 rounded-t-md"
-                      style={{ height: `${(m.mood / 10) * 100}%` }}
+                      style={{ height: `${(m.mood / 10) * 100}%` }} // Height calculated based on mood value.
                     />
                     <span className="text-xs text-gray-500">{m.day}</span>
                   </div>
@@ -146,7 +156,7 @@ export function AiCheckInSection() {
               <p className="text-xs text-center text-gray-500 mt-2">Avg mood: 6.1/10</p>
             </div>
 
-            {/* Quick Buttons */}
+            {/* Quick Action Buttons */}
             <div className="grid grid-cols-2 gap-3">
               <button className="flex flex-col py-4 items-center border border-blue-200 hover:bg-blue-50 text-blue-600 rounded-xl transition bg-sky-200">
                 <MessageCircle className="w-5 h-5" />
@@ -160,7 +170,7 @@ export function AiCheckInSection() {
           </div>
         </div>
 
-        {/* --- Features Row --- */}
+        {/* Features Highlight Row */}
         <div className="grid sm:grid-cols-3 gap-6 mt-16">
           <div className="text-center space-y-3">
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto shadow-sm">

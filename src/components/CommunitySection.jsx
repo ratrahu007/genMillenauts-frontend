@@ -1,3 +1,9 @@
+// src/components/CommunitySection.jsx
+// This component renders the "Community Support" section of the website.
+// It is designed to highlight the platform's community features, including anonymous online "Peer Circles"
+// and "Local Meetup Connections." It uses mock data to simulate real community groups and statistics,
+// presenting them in a structured, user-friendly, and visually appealing manner.
+
 import { 
   Users, 
   Shield, 
@@ -10,6 +16,7 @@ import {
   ArrowRight
 } from "lucide-react";
 
+// Mock data representing available online support groups.
 const peerCircles = [
   {
     title: "Anxiety Support Circle",
@@ -37,6 +44,7 @@ const peerCircles = [
   }
 ];
 
+// Mock data for local meetup interests in different cities.
 const meetupInterests = [
   {
     city: "Mumbai",
@@ -55,12 +63,13 @@ const meetupInterests = [
   }
 ];
 
+// CommunitySection component: Displays community features like peer circles and local meetups.
 export function CommunitySection() {
   return (
     <section id="community" className="py-20 bg-gradient-to-b from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
+        {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <div className="inline-flex items-center bg-blue-100 text-blue-700 border border-blue-200 rounded-full px-4 py-2 text-sm font-medium">
             <Users className="w-4 h-4 mr-2" />
@@ -80,7 +89,7 @@ export function CommunitySection() {
 
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
 
-          {/* Online Peer Circles */}
+          {/* Column for Online Peer Circles */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-sky-400 rounded-xl flex items-center justify-center">
@@ -93,6 +102,7 @@ export function CommunitySection() {
             </div>
 
             <div className="space-y-4">
+              {/* Mapping through peerCircles data to display each support group. */}
               {peerCircles.map((circle, index) => (
                 <div
                   key={index}
@@ -132,13 +142,14 @@ export function CommunitySection() {
               ))}
             </div>
 
+            {/* Safety and Anonymity Notice */}
             <div className="flex items-center space-x-2 text-sm text-gray-600 bg-white/70 rounded-lg p-3 border border-gray-200 backdrop-blur-sm">
               <Lock className="w-4 h-4 text-blue-500" />
               <span>All conversations are anonymous and AI-moderated for safety</span>
             </div>
           </div>
 
-          {/* Local Meetup Connections */}
+          {/* Column for Local Meetup Connections */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-gradient-to-r from-sky-400 to-blue-500 rounded-xl flex items-center justify-center">
@@ -151,6 +162,7 @@ export function CommunitySection() {
             </div>
 
             <div className="space-y-4">
+              {/* Mapping through meetupInterests data to display local groups. */}
               {meetupInterests.map((location, index) => (
                 <div
                   key={index}
@@ -165,6 +177,7 @@ export function CommunitySection() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-3">
+                    {/* Displaying interests for each location. */}
                     {location.interests.map((interest, i) => (
                       <span
                         key={i}
@@ -182,11 +195,13 @@ export function CommunitySection() {
               ))}
             </div>
 
+            {/* Consent and Safety Notice */}
             <div className="flex items-center space-x-2 text-sm text-gray-600 bg-white/70 rounded-lg p-3 border border-gray-200 backdrop-blur-sm">
               <Shield className="w-4 h-4 text-blue-400" />
               <span>Double opt-in system ensures mutual consent before connections</span>
             </div>
-
+            
+            {/* Decorative Image */}
             <div className="w-full h-48 rounded-3xl shadow-lg overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1613618958001-ee9ad8f01f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
@@ -197,7 +212,7 @@ export function CommunitySection() {
           </div>
         </div>
 
-        {/* Community Stats */}
+        {/* Community Statistics Bar */}
         <div className="grid sm:grid-cols-4 gap-8 p-8 bg-white/70 backdrop-blur-sm rounded-3xl border border-gray-200 shadow-md">
           {[
             { value: "150+", label: "Active Circles" },
