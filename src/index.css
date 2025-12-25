@@ -9,3 +9,40 @@ body {
   50% { transform: translateY(-20px) scale(1.05); }
   100% { transform: translateY(0) scale(1); }
 }
+
+body {
+  background: linear-gradient(135deg, #d7f3ff, #f3e7ff);
+  background-size: 300% 300%;
+  animation: gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 26px rgba(0,0,0,0.12);
+}
+
+.breathing {
+  animation: breathe 5s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%   { transform: scale(1); opacity: 0.9; }
+  50%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}

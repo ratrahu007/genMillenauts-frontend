@@ -8,7 +8,7 @@ export const analyzeStress = createAsyncThunk(
       const response = await fetch(
         "http://localhost:8080/api/ai/stress/analyze",
         {
-          method: "POST",
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },

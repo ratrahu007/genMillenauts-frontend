@@ -70,7 +70,30 @@ export default function RegisterForm({ email }) {
             {...register("fullName", { required: true })}
             className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
           />
-          {/* ... other input fields for username, city, mobile, and password ... */}
+          <input
+            type="text"
+            placeholder="User Name"
+            {...register("userName", { required: true })}
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="Any Name"
+            {...register("anyName", { required: true })}
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="Mobile"
+            {...register("mobile", { required: true })}
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="City"
+            {...register("city", { required: true })}
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
+          />
           <input
             type="email"
             placeholder="Email"

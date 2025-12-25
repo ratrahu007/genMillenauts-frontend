@@ -36,9 +36,6 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState(user);
   const [booking, setBooking] = useState(null);
 
-  // ---------------------------------------------
-  // ✅ Effect 1 — Fetch profile + stress analytics
-  // ---------------------------------------------
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -62,14 +59,11 @@ export default function DashboardPage() {
     dispatch(getWeeklyStress());
   }, [token, user, role, navigate, dispatch]);
 
-  // ---------------------------------------------
-  // ✅ Effect 2 — Fetch booking by bookingId (saved after payment)
-  // ---------------------------------------------
   useEffect(() => {
-    const fetchBooking = async () => {
-      const bookingId = localStorage.getItem("latestBookingId");
-      if (!bookingId) return;
+    const bookingId = localStorage.getItem("latestBookingId");
+    if (!bookingId) return;
 
+    const fetchBooking = async () => {
       try {
         const data = await getBookingById(token, bookingId);
         setBooking(data);
@@ -81,152 +75,134 @@ export default function DashboardPage() {
     fetchBooking();
   }, [token]);
 
-  // ---------------------------------------------
-  // Logout handler
-  // ---------------------------------------------
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
 
-  // ---------------------------------------------
-  // Animations
-  // ---------------------------------------------
-  const containerVariants = {
+  const container = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 },
+      transition: { staggerChildren: 0.08 },
     },
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { ease: "easeOut", duration: 0.5 },
-    },
+  const item = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
-  // ---------------------------------------------
-  // Render UI
-  // ---------------------------------------------
   return (
-    <div className="min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="flex items-center justify-between w-full max-w-7xl mx-auto mb-10"
-      >
-        <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-br from-teal-400 to-blue-500 w-10 h-10 flex items-center justify-center rounded-xl shadow-md">
-            <Heart className="text-white w-6 h-6" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-8 py-10"
+    >
+      {/* HEADER */}
+      <header className="flex items-center justify-between max-w-7xl mx-auto mb-10">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-500 text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-sm">
+            <Heart className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
+          <h1 className="text-2xl font-semibold text-slate-800 tracking-tight">
             Gen<span className="text-blue-500">Millenauts</span>
           </h1>
         </div>
 
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg shadow-sm transition-colors"
+          className="flex items-center gap-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg shadow-sm transition"
         >
           <LogOut className="w-4 h-4" />
-          <span className="font-medium">Logout</span>
+          Logout
         </button>
-      </motion.header>
+      </header>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <motion.main
-        variants={containerVariants}
+        variants={container}
         initial="hidden"
         animate="visible"
         className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8"
       >
-        {/* Left Column */}
+        {/* LEFT */}
         <div className="lg:col-span-2 space-y-8">
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
             <WelcomeCard profile={profile} role={role} />
           </motion.div>
 
-          {/* Booking Details */}
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
             <BookingDetails booking={booking} />
           </motion.div>
 
-          {/* Stress Components */}
-          <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <motion.div variants={itemVariants}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
               <LatestStress latestStress={latestStress} />
             </motion.div>
-            <motion.div variants={itemVariants}>
+            <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
               <WeeklyStressChart weeklyStress={weeklyStress} />
             </motion.div>
-          </motion.div>
+          </div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
             <MoodTracker />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
             <AiCompanion />
           </motion.div>
         </div>
 
-        {/* Right Column */}
-        <div className="lg:col-span-1 space-y-8">
-          <motion.div variants={itemVariants}>
+        {/* RIGHT */}
+        <div className="space-y-8">
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow cursor-pointer" onClick={() => navigate("/therapists")}>
             <FeatureCard
               icon={<Calendar className="w-8 h-8 text-blue-500" />}
               title="Book a Session"
               description="Find and schedule with a therapist."
-              color="blue"
-              onClick={() => navigate("/therapists")}
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow cursor-pointer">
             <FeatureCard
               icon={<Users className="w-8 h-8 text-rose-500" />}
               title="Community"
-              description="Connect in a safe space."
-              color="rose"
+              description="Connect in a safe supportive space."
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow cursor-pointer"
+            onClick={() => navigate("/alert-contacts")}
+          >
             <FeatureCard
               icon={<ListChecks className="w-8 h-8 text-indigo-500" />}
               title="View Alert Contacts"
-              description="View your trusted contacts for emergencies."
-              color="indigo"
-              onClick={() => navigate("/alert-contacts")}
+              description="Your trusted emergency contacts."
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow cursor-pointer"
+            onClick={() => navigate("/add-alert-contact")}
+          >
             <FeatureCard
               icon={<ShieldAlert className="w-8 h-8 text-red-500" />}
               title="Add Alert Contact"
-              description="Add a trusted contact for emergencies."
-              color="red"
-              onClick={() => navigate("/add-alert-contact")}
+              description="Add someone you trust during emergencies."
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={item} className="bg-white p-5 rounded-xl shadow">
             <JournalPrompt />
           </motion.div>
         </div>
       </motion.main>
 
-      {/* Footer */}
-      <footer className="mt-16 text-gray-500 text-sm text-center w-full max-w-7xl mx-auto">
+      {/* FOOTER */}
+      <footer className="mt-16 text-slate-500 text-center text-sm">
         Made with 💙 by <span className="font-medium text-blue-600">GenMillenauts</span>
       </footer>
-    </div>
+    </motion.div>
   );
 }
