@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, Loader, Sparkles } from "lucide-react";
 import { chatWithAi } from "../../services/aiService";
 import { toast } from "sonner";
+import FormattedBotMessage from "./FormattedBotMessage";
 
 // AiCompanion component: A chat interface for interacting with an AI.
 const AiCompanion = () => {
@@ -100,11 +101,18 @@ const AiCompanion = () => {
             >
               {/* Bot or User icon */}
               {/* ... */}
-              {/* Message bubble with different styling for user and bot. */}
-              <div className={`p-3 rounded-xl max-w-md shadow-sm ${
-                  msg.role === "user" ? "bg-teal-500 text-white" : "bg-slate-100 text-slate-800"
-              }`}>
-                {msg.content}
+              <div
+                className={`p-3 rounded-xl max-w-md shadow-sm ${
+                  msg.role === "user"
+                    ? "bg-teal-500 text-white"
+                    : "bg-slate-100 text-slate-800"
+                }`}
+              >
+                {msg.role === "bot" ? (
+                  <FormattedBotMessage content={msg.content} />
+                ) : (
+                  msg.content
+                )}
               </div>
             </motion.div>
           ))}
