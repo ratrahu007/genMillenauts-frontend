@@ -59,8 +59,8 @@ GenMillenauts is a revolutionary platform designed to empower individuals on the
 ## Technologies Used
 
 - **Frontend:** React, Redux, Tailwind CSS
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB
+- **Backend:** Java , SprinBoot
+- **Database:** My-SQl
 - **Authentication:** JWT
 
 ## Getting Started
