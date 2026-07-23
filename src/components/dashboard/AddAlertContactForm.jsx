@@ -1,71 +1,69 @@
 // src/components/dashboard/AddAlertContactForm.jsx
 // This component provides a form for users to add a new "alert contact."
-// An alert contact is a trusted person (e.g., family member, friend) who can be notified in case of an emergency.
-// The form collects the contact's name, phone number, and relationship to the user.
-// It uses Framer Motion for subtle animations, provides loading and success states,
-// and communicates with the backend via the `addAlertContact` service.
-// Upon successful submission, it displays a success message and redirects the user back to the dashboard.
 
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User, Phone, Users, Check, Loader } from "lucide-react";
 import { toast } from "sonner";
 import { addAlertContact } from "../../services/userService";
 
-// AddAlertContactForm component: A form for adding a new emergency alert contact.
 const AddAlertContactForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  // Retrieves the authentication token from the Redux store.
+
+  // Authentication token
   const { token } = useSelector((state) => state.auth);
-  
-  // State to manage loading, success status, and form data.
+
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     relation: "",
   });
 
-  // Updates form state as the user types.
+  // Handle input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
   };
 
-  // Handles form submission.
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setIsSuccess(false);
+
     try {
-      // Formats the phone number to include the country code before sending.
+      const phone = formData.phone.trim();
+
       const contactData = {
-        ...formData,
-        phone: `+91${formData.phone}`,
+        name: formData.name.trim(),
+        relation: formData.relation.trim(),
+        phone: phone.startsWith("+91") ? phone : `+91${phone}`,
       };
-      // Calls the API service to add the contact.
+
       await addAlertContact(token, contactData);
-      
-      // On success, update UI state and show a confirmation toast.
-      setLoading(false);
+
       setIsSuccess(true);
       toast.success("Alert contact added successfully!");
-      
-      // Redirect back to the dashboard after a short delay.
+
       setTimeout(() => {
         navigate("/dashboard");
       }, 1000);
     } catch (error) {
-      setLoading(false);
       toast.error(error.message || "Failed to add alert contact.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    // The form is animated with Framer Motion for a smooth entry effect.
     <motion.form
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -73,51 +71,99 @@ const AddAlertContactForm = () => {
       onSubmit={handleSubmit}
       className="space-y-6"
     >
-      {/* Each form field is also animated, appearing with a slight delay. */}
+      {/* Name */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700"
+        >
           Name
         </label>
+
         <div className="relative mt-1">
-          {/* Icon inside the input field */}
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <User className="h-5 w-5 text-gray-400" />
           </div>
+
           <input
             type="text"
             id="name"
             value={formData.name}
             onChange={handleChange}
-            className="block w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg shadow-sm"
             placeholder="Enter name"
             required
+            className="block w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
       </motion.div>
 
-      {/* Phone number input field */}
+      {/* Phone */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
-        {/* ... similar structure for phone ... */}
+        <label
+          htmlFor="phone"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Phone Number
+        </label>
+
+        <div className="relative mt-1">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Phone className="h-5 w-5 text-gray-400" />
+          </div>
+
+          <input
+            type="tel"
+            id="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="9876543210"
+            maxLength={10}
+            pattern="[0-9]{10}"
+            required
+            className="block w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
       </motion.div>
 
-      {/* Relation input field */}
+      {/* Relation */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
       >
-        {/* ... similar structure for relation ... */}
+        <label
+          htmlFor="relation"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Relation
+        </label>
+
+        <div className="relative mt-1">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Users className="h-5 w-5 text-gray-400" />
+          </div>
+
+          <input
+            type="text"
+            id="relation"
+            value={formData.relation}
+            onChange={handleChange}
+            placeholder="Father, Friend, Sister..."
+            required
+            className="block w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
       </motion.div>
 
-      {/* Submit button with loading and success states. */}
+      {/* Submit Button */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -125,19 +171,19 @@ const AddAlertContactForm = () => {
       >
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || isSuccess}
           className={`w-full flex justify-center items-center py-3 px-4 rounded-lg text-white transition-colors ${
             isSuccess
-              ? "bg-green-500" // Success state style
-              : "bg-red-600 hover:bg-red-700" // Default state style
+              ? "bg-green-500"
+              : "bg-red-600 hover:bg-red-700 disabled:bg-red-400"
           }`}
         >
           {loading ? (
-            <Loader className="animate-spin h-5 w-5" /> // Loading spinner
+            <Loader className="h-5 w-5 animate-spin" />
           ) : isSuccess ? (
-            <Check className="h-5 w-5" /> // Success checkmark
+            <Check className="h-5 w-5" />
           ) : (
-            "Add Contact" // Default text
+            "Add Contact"
           )}
         </button>
       </motion.div>

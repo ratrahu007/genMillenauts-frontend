@@ -50,7 +50,7 @@ const AddAlertContactPage = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <AddAlertContactForm />
+          <AddAlertContactForm/>
         </motion.div>
       </div>
     </div>
