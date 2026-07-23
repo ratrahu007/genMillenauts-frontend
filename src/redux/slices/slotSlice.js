@@ -23,7 +23,6 @@ export const fetchSlots = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().auth;
-      console.log("Fetching slots with token:", token); // For debugging
       const response = await fetchSlotsService(token);
       return response;
     } catch (error) {

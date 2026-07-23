@@ -1,7 +1,7 @@
 // src/services/authService.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/auth";
+const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/auth";
 
 export const sendOtp = async (email) => {
   const response = await axios.post(
@@ -15,7 +15,6 @@ export const sendOtp = async (email) => {
 // ✅ FIXED: Only send { email, otp }
 export const verifyOtp = async (email, otp) => {
   const body = { email, otp };
-  console.log("VERIFY OTP PAYLOAD:", body);
 
   const response = await axios.post(`${BASE_URL}/verify-otp`, body, {
     headers: { "Content-Type": "application/json" },
@@ -49,7 +48,7 @@ export const loginUser = async (email, password) => {
 
 export const updateUser = async (token, userData) => {
   const response = await axios.put(
-    "http://localhost:8080/api/users/me",
+    "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/users/me",
     userData,
     {
       headers: {

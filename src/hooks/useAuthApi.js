@@ -63,9 +63,6 @@ export const useAuthApi = () => {
     const response = await registerUser(payload);
     const data = response.data;
 
-    // Log the backend response
-    console.log("🧾 BACKEND JSON:", data);
-
     // ✅ Handle 4xx errors
     if (response.status >= 400) {
       const message =

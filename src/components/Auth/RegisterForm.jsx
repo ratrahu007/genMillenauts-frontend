@@ -40,8 +40,6 @@ export default function RegisterForm({ email }) {
       role: "USER", 
     };
 
-    console.log("REGISTER PAYLOAD:", payload);
-
     // Call the registration handler from the auth hook.
     const response = await handleRegister(payload, null);
 

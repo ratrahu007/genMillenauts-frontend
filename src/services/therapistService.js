@@ -1,7 +1,7 @@
 // src/services/therapistService.js
 import axios from "axios";
 
-const API_URL = " http://localhost:8080/api/therapists"; // Base URL for therapist endpoints
+const API_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/therapists"; // Base URL for therapist endpoints
 
 /**
  * Sends an OTP to the therapist's email or mobile.
@@ -9,11 +9,9 @@ const API_URL = " http://localhost:8080/api/therapists"; // Base URL for therapi
  * @returns {Promise<any>} The response from the API.
  */
 export const sendTherapistOtp = async (payload) => {
-  console.log("Request: POST /api/therapists/send-otp", payload);
   const response = await axios.post(`${API_URL}/send-otp`, payload, {
     headers: { "Content-Type": "application/json" },
   });
-  console.log("Response: POST /api/therapists/send-otp", response.data);
   return response.data;
 };
 
@@ -23,11 +21,9 @@ export const sendTherapistOtp = async (payload) => {
  * @returns {Promise<any>} The response from the API.
  */
 export const verifyTherapistOtp = async (payload) => {
-  console.log("Request: POST /api/therapists/verify-otp", payload);
   const response = await axios.post(`${API_URL}/verify-otp`, payload, {
     headers: { "Content-Type": "application/json" },
   });
-  console.log("Response: POST /api/therapists/verify-otp", response.data);
   return response.data;
 };
 
@@ -37,43 +33,34 @@ export const verifyTherapistOtp = async (payload) => {
  * @returns {Promise<any>} The response from the API.
  */
 export const registerTherapist = async (payload) => {
-  console.log("Request: POST /api/therapists/register", payload);
   const response = await axios.post(`${API_URL}/register`, payload, {
     headers: { "Content-Type": "application/json" },
   });
-  console.log("Response: POST /api/therapists/register", response.data);
   return response.data;
 };
 
 export const loginTherapist = async (payload) => {
-  console.log("Request: POST /api/therapists/login", payload);
   const response = await axios.post(`${API_URL}/login`, payload, {
     headers: { "Content-Type": "application/json" },
   });
-  console.log("Response: POST /api/therapists/login", response.data);
   return response.data;
 };
 
 export const getTherapistProfile = async (token) => {
-  console.log("Request: GET /api/therapists/me");
   const response = await axios.get(`${API_URL}/me`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log("Response: GET /api/therapists/me", response.data);
   return response.data;
 };
 
 export const getAllTherapists = async () => {
-  console.log("Request: GET /api/therapists/public");
   const response = await axios.get(`${API_URL}/public`, {
     headers: {
       "Content-Type": "application/json",
     },
   });
-  console.log("Response: GET /api/therapists/public", response.data);
   return response.data;
 };
-

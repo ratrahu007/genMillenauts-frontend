@@ -1,7 +1,7 @@
 // src/services/slotService.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/slots";
+const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/slots";
 
 export const generateSlots = async (token, slotData) => {
   const response = await axios.post(`${BASE_URL}/generate`, slotData, {

@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/ai";
+const API_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai";
 
-export const chatWithAi = async (token, message) => {
+export const chatWithAi = async (token, message, provider = "gemini") => {
   const response = await axios.post(
     `${API_URL}/chat`,
-    { message },
+    { message, provider },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -19,7 +19,8 @@ export const chatWithAiStreaming = async (
   token,
   message,
   onChunk,
-  onComplete
+  onComplete,
+  provider = "gemini"
 ) => {
   const response = await fetch(`${API_URL}/chat-stream`, {
     method: "POST",
@@ -27,7 +28,7 @@ export const chatWithAiStreaming = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, provider }),
   });
 
   if (!response.body) {

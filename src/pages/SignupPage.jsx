@@ -1,6 +1,6 @@
 // src/pages/SignupPage.jsx
 import React, { useState } from "react";
-import SignupForm from "../components/Auth/SignupForm";
+import SignupForm from "../components/Auth/SignUpForm";
 import OTPInput from "../components/Auth/OTPInput";
 import RegisterForm from "../components/Auth/RegisterForm";
 import { AnimatePresence, motion } from "framer-motion";

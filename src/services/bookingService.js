@@ -1,8 +1,8 @@
 // src/services/bookingService.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/booking";
-const PAYMENT_URL = "http://localhost:8080/payment";
+const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/booking";
+const PAYMENT_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/payment";
 
 export const bookSlot = async (therapistId, slotId, token) => {
   const response = await axios.post(

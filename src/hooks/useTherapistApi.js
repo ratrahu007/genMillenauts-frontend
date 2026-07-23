@@ -39,17 +39,11 @@ export const useTherapistApi = () => {
    */
   const sendOtp = async (contact) => {
     setLoading(true);
-    console.log("useTherapistApi: Sending OTP...", contact);
     try {
       const response = await sendTherapistOtp(contact);
       toast.success("OTP sent successfully! Please check your device.");
-      console.log("useTherapistApi: OTP sent response", response);
       return response;
     } catch (error) {
-      console.error(
-        "useTherapistApi: Error sending OTP",
-        error.response?.data || error.message
-      );
       toast.error(
         error.response?.data?.message || "Failed to send OTP. Please try again."
       );
@@ -65,17 +59,11 @@ export const useTherapistApi = () => {
    */
   const verifyOtp = async (data) => {
     setLoading(true);
-    console.log("useTherapistApi: Verifying OTP...", data);
     try {
       const response = await verifyTherapistOtp(data);
       toast.success("OTP verified successfully!");
-      console.log("useTherapistApi: OTP verification response", response);
       return response;
     } catch (error) {
-      console.error(
-        "useTherapistApi: Error verifying OTP",
-        error.response?.data || error.message
-      );
       toast.error(
         error.response?.data?.message || "Invalid OTP. Please try again."
       );
@@ -91,12 +79,10 @@ export const useTherapistApi = () => {
    */
   const register = async (data) => {
     setLoading(true);
-    console.log("useTherapistApi: Registering therapist...", data);
 
     try {
       // Call backend
       const res = await registerTherapist(data);
-      console.log("Backend response:", res);
 
       // Backend ALWAYS sends message
       const msg = res.message || "Something happened.";
@@ -124,7 +110,6 @@ export const useTherapistApi = () => {
         "Something went wrong.";
 
       toast.error(msg);
-      console.error("Therapist Register Error:", msg);
       throw error;
     } finally {
       setLoading(false);

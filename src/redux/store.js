@@ -4,6 +4,7 @@ import authReducer from "./slices/authSlice";
 import stressReducer from "./slices/stressSlice";
 import slotReducer from "./slices/slotSlice";
 import bookingReducer from "./slices/bookingSlice";
+import aiReducer from "./slices/aiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,5 +12,6 @@ export const store = configureStore({
     stress: stressReducer,
     slots: slotReducer,
     bookings: bookingReducer,
+    ai: aiReducer,
   },
 });

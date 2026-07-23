@@ -1,7 +1,7 @@
 // src/services/userService.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/users";
+const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/users";
 
 export const getMyProfile = async (token) => {
   const response = await axios.get(`${BASE_URL}/me`, {
