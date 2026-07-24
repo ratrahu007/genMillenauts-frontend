@@ -6,7 +6,7 @@ export const analyzeStress = createAsyncThunk(
     try {
       const { token } = getState().auth;
       const response = await fetch(
-        "http://localhost:8080/api/ai/stress/analyze",
+        "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/stress/analyze",
         {
           method: "GET",
           headers: {
@@ -31,7 +31,7 @@ export const getLatestStress = createAsyncThunk(
     try {
       const { token } = getState().auth;
       const response = await fetch(
-        "http://localhost:8080/api/ai/stress/latest",
+        "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/stress/latest",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ export const getWeeklyStress = createAsyncThunk(
     try {
       const { token } = getState().auth;
       const response = await fetch(
-        "http://localhost:8080/api/ai/stress/weekly",
+      "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/stress/weekly",
         {
           headers: {
             Authorization: `Bearer ${token}`,
