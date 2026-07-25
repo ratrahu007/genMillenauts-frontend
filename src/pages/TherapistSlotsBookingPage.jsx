@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSlotApi } from "../hooks/useSlotApi";
-import { bookSlot, mockPayment } from "../services/bookingService";
+import { bookSlot, mockPayment, getUserBookings } from "../services/bookingService";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Calendar, Clock, ArrowRight, Loader2 } from "lucide-react";
@@ -26,25 +26,34 @@ export default function TherapistSlotsBookingPage() {
   const [slots, setSlots] = useState([]);
   // State to track the booking status of each slot (e.g., "booking", "booked", "idle").
   const [bookingStatus, setBookingStatus] = useState({});
+  // State to store the user's existing bookings.
+  const [userBookings, setUserBookings] = useState(new Set());
 
   // Retrieve authentication token and user data from the Redux store.
   const { token, user } = useSelector((state) => state.auth);
 
-  // useEffect hook: Fetches the therapist's available slots when the component mounts or therapistId changes.
+  // useEffect hook: Fetches the therapist's available slots and the user's bookings when the component mounts or therapistId changes.
   useEffect(() => {
-    const getSlots = async () => {
+    const getSlotsAndBookings = async () => {
       try {
-        // Fetch slots using the custom hook and update the state.
-        const data = await handleFetchSlotsByTherapist(therapistId);
-        setSlots(data);
+        // Fetch available slots for the therapist.
+        const slotsData = await handleFetchSlotsByTherapist(therapistId);
+        setSlots(slotsData);
+
+        // Fetch the user's current bookings to identify already booked slots.
+        const bookingsData = await getUserBookings(token);
+        // Create a set of booked slot IDs for efficient lookup.
+        const bookedSlotIds = new Set(bookingsData.map(b => b.slotId));
+        setUserBookings(bookedSlotIds);
+
       } catch (error) {
-        console.error("Failed to fetch slots", error);
-        toast.error("Could not load available slots.");
+        console.error("Failed to fetch data", error);
+        toast.error("Could not load available slots or your bookings.");
       }
     };
-    // Only fetch slots if a therapistId is available.
-    if (therapistId) getSlots();
-  }, [therapistId, handleFetchSlotsByTherapist]);
+    // Only fetch data if a therapistId and token are available.
+    if (therapistId && token) getSlotsAndBookings();
+  }, [therapistId, token, handleFetchSlotsByTherapist]);
 
   // handleBooking: Manages the multi-step process of booking a slot.
   const handleBooking = async (slotId) => {
@@ -53,7 +62,6 @@ export default function TherapistSlotsBookingPage() {
 
     try {
       // Step 1: Call the booking service to reserve the slot.
-      // The backend returns a unique bookingId for the reservation.
       const bookingResponse = await bookSlot(therapistId, slotId, token);
       const bookingId = bookingResponse.bookingId;
 
@@ -132,49 +140,50 @@ export default function TherapistSlotsBookingPage() {
 
             <ul className="space-y-4">
               {/* Map over the available slots and render each one as a list item. */}
-              {slots.map((slot) => (
-                <li
-                  key={slot.id}
-                  className="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg border"
-                >
-                  <div className="flex items-center">
-                    <Clock className="w-6 h-6 text-gray-500 mr-3" />
-                    <span className="font-semibold text-lg text-gray-700">
-                      {/* Display the formatted start and end time for the slot. */}
-                      {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-                    </span>
-                  </div>
+              {slots.map((slot) => {
+                const isBookedByCurrentUser = userBookings.has(slot.id);
+                const isBookedInSession = bookingStatus[slot.id] === "booked";
+                const isBookingInProgress = bookingStatus[slot.id] === "booking";
+                const isSlotBooked = slot.booked || isBookedByCurrentUser || isBookedInSession;
 
-                  {/* Button to handle booking the slot. */}
-                  <button
-                    onClick={() => handleBooking(slot.id)}
-                    // Disable the button if the slot is currently being booked or is already booked.
-                    disabled={
-                      bookingStatus[slot.id] === "booking" ||
-                      bookingStatus[slot.id] === "booked"
-                    }
-                    className={`group inline-flex items-center justify-center px-6 py-2 font-semibold rounded-md w-full sm:w-auto transition-all ${
-                      bookingStatus[slot.id] === "booked"
-                        ? "bg-green-500 text-white cursor-not-allowed" // Style for a booked slot
-                        : "bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-400" // Default booking style
-                    }`}
+                return (
+                  <li
+                    key={slot.id}
+                    className="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg border"
                   >
-                    {/* Show a spinner while the booking is in progress. */}
-                    {bookingStatus[slot.id] === "booking" && (
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    )}
-                    {/* Change button text based on booking status. */}
-                    {bookingStatus[slot.id] === "booked"
-                      ? "Booked!"
-                      : "Book Now"}
-                    {/* Show an arrow icon for available slots. */}
-                    {bookingStatus[slot.id] === "idle" ||
-                    !bookingStatus[slot.id] ? (
-                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    ) : null}
-                  </button>
-                </li>
-              ))}
+                    <div className="flex items-center">
+                      <Clock className="w-6 h-6 text-gray-500 mr-3" />
+                      <span className="font-semibold text-lg text-gray-700">
+                        {/* Display the formatted start and end time for the slot. */}
+                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                      </span>
+                    </div>
+
+                    {/* Button to handle booking the slot. */}
+                    <button
+                      onClick={() => handleBooking(slot.id)}
+                      // Disable the button if the slot is already booked by anyone, or by the current user.
+                      disabled={isSlotBooked || isBookingInProgress}
+                      className={`group inline-flex items-center justify-center px-6 py-2 font-semibold rounded-md w-full sm:w-auto transition-all ${
+                        isSlotBooked
+                          ? "bg-green-500 text-white cursor-not-allowed" // Style for a booked slot
+                          : "bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-400" // Default booking style
+                      }`}
+                    >
+                      {/* Show a spinner while the booking is in progress. */}
+                      {isBookingInProgress && (
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      )}
+                      {/* Change button text based on booking status. */}
+                      {isSlotBooked ? "Booked" : "Book Now"}
+                      {/* Show an arrow icon for available slots. */}
+                      {!isSlotBooked && !isBookingInProgress && (
+                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : (

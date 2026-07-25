@@ -1,99 +1,66 @@
+// src/components/dashboard/WelcomeCard.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import { Wind, Sparkles, User, Mail, MapPin, Users } from "lucide-react";
-import Button from "../ui/Button";
+import { Link } from "react-router-dom";
+import { Calendar, PlusCircle, User, Smile } from "lucide-react";
 
-const WelcomeCard = ({ profile }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
-      className="relative w-full p-8 overflow-hidden rounded-2xl border border-gray-200/50 bg-white/60 shadow-2xl backdrop-blur-xl"
-    >
-      {/* Background Glows */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+const WelcomeCard = ({ profile, role }) => {
+
+    const name = profile?.fullName || "User";
+
+    // Content for Therapists
+    const therapistContent = (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+                to="/therapist/slots"
+                className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 p-4 rounded-xl transition-all"
+            >
+                <Calendar className="w-6 h-6 text-teal-600" />
+                <div>
+                    <p className="font-semibold text-gray-800">View Slots</p>
+                    <p className="text-sm text-gray-500">See all your available and booked slots.</p>
+                </div>
+            </Link>
+            <div // This is not a link, but a visual cue to the form below
+                className="flex items-center gap-3 bg-gray-100 p-4 rounded-xl"
+            >
+                <PlusCircle className="w-6 h-6 text-blue-600" />
+                <div>
+                    <p className="font-semibold text-gray-800">Create Slots</p>
+                    <p className="text-sm text-gray-500">Generate new availability for your clients.</p>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Content for Regular Users
+    const userContent = (
+        <div className="text-center md:text-left">
+            <p className="text-gray-600 mb-6">
+                Your mental wellness journey is important. We're here to support you every step of the way.
+            </p>
+            <div className="flex justify-center md:justify-start items-center gap-2 bg-blue-50 text-blue-700 p-3 rounded-lg">
+                <Smile className="w-5 h-5" />
+                <span className="font-medium">You're doing great, keep it up!</span>
+            </div>
+        </div>
+    );
+
+
+    return (
         <motion.div
-          animate={{
-            x: ["-20%", "20%", "-20%"],
-            y: ["-20%", "20%", "-20%"],
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "mirror",
-            ease: "easeInOut",
-          }}
-          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-br from-rose-100 via-purple-100 to-sky-100"
-        />
-        <div className="absolute w-96 h-96 bg-purple-300/50 rounded-full -top-16 -left-16 blur-3xl opacity-50"></div>
-        <div className="absolute w-72 h-72 bg-sky-200/50 rounded-full -bottom-24 right-0 blur-3xl opacity-50"></div>
-      </div>
-
-      <div className="relative z-10 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-3xl font-bold text-gray-800 mb-3 flex items-center justify-center gap-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200"
         >
-          <Sparkles className="text-purple-500" size={28} />
-          Welcome back, {profile?.fullName || "Mindful One"}
-        </motion.h2>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-gray-600 text-md mb-8 font-serif italic max-w-md mx-auto"
-        >
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-            <div className="flex items-center space-x-2">
-              <User size={18} className="text-gray-500" />
-              <span>{profile?.fullName}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Mail size={18} className="text-gray-500" />
-              <span>{profile?.email}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <MapPin size={18} className="text-gray-500" />
-              <span>{profile?.city || "Not set"}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Users size={18} className="text-gray-500" />
-              <span>
-                Offline meets:{" "}
-                {profile?.isOptedForOfflineMeets ? "Opted In" : "Opted Out"}
-              </span>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            delay: 0.6,
-          }}
-        >
-          <Button
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome back, {name}!</h2>
+            <p className="text-gray-500 mb-6">Here's a summary of your dashboard.</p>
             
-            className="bg-blue-500/80 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg backdrop-blur-sm border border-white/20 transition-all duration-300 transform hover:scale-105"
-          >
-            <Wind size={20} className="mr-2" />
-            Begin a Moment of Calm
-          </Button>
+            {role === "therapist" ? therapistContent : userContent}
+            
         </motion.div>
-      </div>
-    </motion.div>
-  );
+    );
 };
 
 export default WelcomeCard;
-

@@ -5,7 +5,7 @@
 // 2. Decodes the JWT to verify that it has not expired.
 // 3. If a `requiredRole` is specified, it compares it against the user's role from the Redux store.
 // If any of these checks fail, it logs the user out, displays an appropriate error toast,
-// and redirects them to the relevant login page.
+// and redirects them to the homepage.
 
 import React from "react";
 import { Navigate } from "react-router-dom";
@@ -20,14 +20,10 @@ export default function ProtectedRoute({ children, requiredRole }) {
   const { token, role: userRole } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  // Determine the correct login path based on the required role.
-  const loginPath =
-    requiredRole === "THERAPIST" ? "/therapist/login" : "/login";
-
   // 1. Check for the existence of a token.
   if (!token) {
     toast.error("You must be logged in to view this page.");
-    return <Navigate to={loginPath} replace />;
+    return <Navigate to="/" replace />;
   }
 
   // 2. Check for token validity and expiration.
@@ -39,20 +35,20 @@ export default function ProtectedRoute({ children, requiredRole }) {
     if (decodedToken.exp < currentTime) {
       dispatch(logout()); // Clear the invalid session from Redux.
       toast.error("Your session has expired. Please log in again.");
-      return <Navigate to={loginPath} replace />;
+      return <Navigate to="/" replace />;
     }
   } catch (error) {
     // If the token is malformed or invalid, decoding will fail.
     dispatch(logout());
     toast.error("Invalid session. Please log in again.");
-    return <Navigate to={loginPath} replace />;
+    return <Navigate to="/" replace />;
   }
 
   // 3. Check if the user's role matches the required role for the route.
   if (requiredRole && userRole !== requiredRole) {
     toast.error("You do not have permission to access this page.");
-    // Redirect to a default or role-specific login page.
-    return <Navigate to={loginPath} replace />;
+    // Redirect to homepage
+    return <Navigate to="/" replace />;
   }
 
   // If all checks pass, render the protected component.

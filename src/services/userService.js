@@ -1,10 +1,8 @@
 // src/services/userService.js
-import axios from "axios";
-
-const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/users";
+import api from "./api";
 
 export const getMyProfile = async (token) => {
-  const response = await axios.get(`${BASE_URL}/me`, {
+  const response = await api.get(`/users/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -14,7 +12,7 @@ export const getMyProfile = async (token) => {
 };
 
 export const updateUserProfile = async (token, userData) => {
-  const response = await axios.put(`${BASE_URL}/me`, userData, {
+  const response = await api.put(`/users/me`, userData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -24,7 +22,7 @@ export const updateUserProfile = async (token, userData) => {
 };
 
 export const addAlertContact = async (token, contactData) => {
-  const response = await axios.post(`${BASE_URL}/me/alerts`, contactData, {
+  const response = await api.post(`/users/me/alerts`, contactData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -34,7 +32,7 @@ export const addAlertContact = async (token, contactData) => {
 };
 
 export const getAlertContacts = async (token) => {
-  const response = await axios.get(`${BASE_URL}/me/alerts`, {
+  const response = await api.get(`/users/me/alerts`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -43,7 +41,7 @@ export const getAlertContacts = async (token) => {
 };
 
 export const getAlertContactById = async (token, id) => {
-  const response = await axios.get(`${BASE_URL}/me/alerts/${id}`, {
+  const response = await api.get(`/users/me/alerts/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -52,7 +50,7 @@ export const getAlertContactById = async (token, id) => {
 };
 
 export const deleteAlertContact = async (token, id) => {
-  const response = await axios.delete(`${BASE_URL}/me/alerts/${id}`, {
+  const response = await api.delete(`/users/me/alerts/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

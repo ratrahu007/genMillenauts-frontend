@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const API_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai";
+import api from "./api";
 
 export const chatWithAi = async (token, message, provider = "gemini") => {
-  const response = await axios.post(
-    `${API_URL}/chat`,
+  const response = await api.post(
+    `/ai/chat`,
     { message, provider },
     {
       headers: {
@@ -22,7 +20,7 @@ export const chatWithAiStreaming = async (
   onComplete,
   provider = "gemini"
 ) => {
-  const response = await fetch(`${API_URL}/chat-stream`, {
+  const response = await fetch(`https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/chat-stream`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

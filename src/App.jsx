@@ -5,6 +5,7 @@ import {
   Route,
   useNavigate,
   useLocation,
+  Outlet,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -35,11 +36,13 @@ import TherapistSlotsPage from "./pages/TherapistSlotsPage";
 import TherapistsPage from "./pages/TherapistsPage";
 import TherapistSlotsBookingPage from "./pages/TherapistSlotsBookingPage";
 import AvailableSlotsPage from "./pages/AvailableSlotsPage";
+import UserLayout from "./layouts/UserLayout";
+import TherapistLayout from "./layouts/TherapistLayout";
 
 function App() {
   const dispatch = useDispatch();
   const { token, role } = useSelector((state) => state.auth);
--
+
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     if (auth) {
@@ -87,19 +90,19 @@ function AppContent() {
   return (
     <>
       <Toaster richColors position="top-center" />
-      <Navbar />
-
       <Routes>
-        {/* Homepage with all sections */}
+        {/* Homepage */}
         <Route
           path="/"
           element={
             <>
+              <Navbar />
               <HeroSection />
               <FeatureSection />
               <TherapistSection />
               <CommunitySection />
               <AiCheckInSection />
+              <Footer />
             </>
           }
         />
@@ -107,7 +110,6 @@ function AppContent() {
         {/* User Authentication */}
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/slots" element={<AvailableSlotsPage />} />
 
         {/* Therapist Authentication */}
         <Route path="/therapist/signup" element={<TherapistSignupPage />} />
@@ -117,73 +119,86 @@ function AppContent() {
         />
         <Route path="/therapist/login" element={<TherapistLoginPage />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/add-alert-contact"
-          element={
-            <ProtectedRoute>
-              <AddAlertContactPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/alert-contacts"
-          element={
-            <ProtectedRoute>
-              <AlertContactsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/therapists"
-          element={
-            <ProtectedRoute>
-              <TherapistsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/therapists/:therapistId/slots"
-          element={
-            <ProtectedRoute>
-              <TherapistSlotsBookingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/therapist/dashboard"
-          element={
-            <ProtectedRoute requiredRole="therapist">
-              <TherapistDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/therapist/slots"
-          element={
-            <ProtectedRoute requiredRole="therapist">
-              <TherapistSlotsPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* User Routes */}
+        <Route element={<UserLayout />}>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-alert-contact"
+            element={
+              <ProtectedRoute>
+                <AddAlertContactPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/alert-contacts"
+            element={
+              <ProtectedRoute>
+                <AlertContactsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/therapists"
+            element={
+              <ProtectedRoute>
+                <TherapistsPage />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/slots"
+            element={
+              <ProtectedRoute>
+                <AvailableSlotsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/therapists/:therapistId/slots"
+            element={
+              <ProtectedRoute>
+                <TherapistSlotsBookingPage />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+
+        {/* Therapist Routes */}
+        <Route element={<TherapistLayout />}>
+          <Route
+            path="/therapist/dashboard"
+            element={
+              <ProtectedRoute requiredRole="therapist">
+                <TherapistDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/therapist/slots"
+            element={
+              <ProtectedRoute requiredRole="therapist">
+                <TherapistSlotsPage />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
       </Routes>
-      <Footer />
       <ToastContainer
         position="top-right"
         autoClose={3000}

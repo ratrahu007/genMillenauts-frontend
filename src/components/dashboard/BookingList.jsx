@@ -1,8 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { UserCircle } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const BookingList = ({ bookings }) => {
+  const { role } = useSelector((state) => state.auth);
+
   if (!bookings || bookings.length === 0) {
     return (
       <motion.div
@@ -62,10 +65,10 @@ const BookingList = ({ bookings }) => {
                 </div>
                 <div>
                   <h3 className="font-bold text-xl text-gray-800 tracking-wide">
-                    {booking.userName}
+                    {role === 'therapist' ? booking.userName : booking.therapistName}
                   </h3>
                   <p className="text-xs text-gray-500">
-                    Session booked with you
+                    {role === 'therapist' ? 'Session with Client' : `Specialty: ${booking.therapistSpeciality}`}
                   </p>
                 </div>
               </div>

@@ -1,10 +1,8 @@
 // src/services/slotService.js
-import axios from "axios";
-
-const BASE_URL = "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/slots";
+import api from "./api";
 
 export const generateSlots = async (token, slotData) => {
-  const response = await axios.post(`${BASE_URL}/generate`, slotData, {
+  const response = await api.post(`/slots/generate`, slotData, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -14,7 +12,7 @@ export const generateSlots = async (token, slotData) => {
 };
 
 export const fetchSlots = async (token) => {
-  const response = await axios.post(`${BASE_URL}/fetch`, null, {
+  const response = await api.post(`/slots/fetch`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -23,13 +21,13 @@ export const fetchSlots = async (token) => {
 };
 
 export const getSlotsByTherapistId = async (therapistId) => {
-  const response = await axios.post(`${BASE_URL}/public/fetch`, {
+  const response = await api.post(`/slots/public/fetch`, {
     therapistId,
   });
   return response.data;
 };
 
 export const fetchAllPublicSlots = async () => {
-  const response = await axios.post(`${BASE_URL}/public/fetch`);
+  const response = await api.post(`/slots/public/fetch`);
   return response.data;
 };
