@@ -202,16 +202,10 @@ GenMillenauts
 ## Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/GenMillenauts.git
+git clone https://github.com/ratrahu007/genMillenauts-frontend.git
 ```
 
-## Backend
 
-```bash
-cd backend
-mvn clean install
-mvn spring-boot:run
-```
 
 ## Frontend
 
