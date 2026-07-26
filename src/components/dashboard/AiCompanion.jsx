@@ -11,19 +11,16 @@
 // - Animated UI elements using Framer Motion for a polished user experience.
 
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Bot, User, Loader, Sparkles, Settings } from "lucide-react";
+import { Send, Bot, User, Loader, Sparkles } from "lucide-react";
 import { chatWithAi } from "../../services/aiService";
-import { setProvider } from "../../redux/slices/aiSlice";
 import { toast } from "sonner";
 import FormattedBotMessage from "./FormattedBotMessage";
 
 // AiCompanion component: A chat interface for interacting with an AI.
 const AiCompanion = () => {
-  const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
-  const { provider } = useSelector((state) => state.ai);
+  const { token, user } = useSelector((state) => state.auth);
   // State to store the conversation history.
   const [messages, setMessages] = useState([
     {
@@ -55,8 +52,8 @@ const AiCompanion = () => {
     setLoading(true);
 
     try {
-      // Call the AI service to get a response.
-      const aiResponse = await chatWithAi(token, input, provider);
+      // Call the AI service to get a response, provider is hardcoded to "azure".
+      const aiResponse = await chatWithAi(token, user.id, input, "azure");
       const botMessage = { role: "bot", content: aiResponse.reply };
       // Add the AI's response to the chat history.
       setMessages((prev) => [...prev, botMessage]);
@@ -82,7 +79,9 @@ const AiCompanion = () => {
   
   return (
     <motion.div
-      // ... Framer Motion animation props ...
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-lg w-full max-w-2xl mx-auto"
     >
       {/* Chat Header */}
@@ -96,22 +95,6 @@ const AiCompanion = () => {
             <p className="text-xs text-slate-500">Always here to help</p>
           </div>
         </div>
-        
-        {/* AI Provider Selector */}
-        <div className="flex items-center gap-2">
-          <label htmlFor="provider" className="text-xs font-medium text-slate-500">
-            AI Provider:
-          </label>
-          <select
-            id="provider"
-            value={provider}
-            onChange={(e) => dispatch(setProvider(e.target.value))}
-            className="text-xs bg-slate-50 border border-slate-200 rounded-md px-2 py-1 outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer"
-          >
-            <option value="gemini">Gemini</option>
-            <option value="openai">OpenAI</option>
-          </select>
-        </div>
       </div>
 
       {/* Chat Messages Container */}
@@ -121,13 +104,18 @@ const AiCompanion = () => {
           {messages.map((msg, index) => (
             <motion.div
               key={index}
-              // ... animation props ...
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               className={`flex items-start gap-3 my-4 ${
                 msg.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              {/* Bot or User icon */}
-              {/* ... */}
+              {msg.role === "bot" && (
+                <div className="w-8 h-8 flex-shrink-0 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center">
+                  <Bot size={20} />
+                </div>
+              )}
               <div
                 className={`p-3 rounded-xl max-w-md shadow-sm ${
                   msg.role === "user"
@@ -141,12 +129,27 @@ const AiCompanion = () => {
                   msg.content
                 )}
               </div>
+              {msg.role === "user" && (
+                <div className="w-8 h-8 flex-shrink-0 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center">
+                  <User size={20} />
+                </div>
+              )}
             </motion.div>
           ))}
           {/* Loading indicator when waiting for the bot's response. */}
           {loading && (
-            <motion.div /* ... */>
-              {/* ... "Thinking..." indicator ... */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-3 my-4 justify-start"
+            >
+              <div className="w-8 h-8 flex-shrink-0 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center">
+                <Bot size={20} />
+              </div>
+              <div className="p-3 rounded-xl max-w-md shadow-sm bg-slate-100 text-slate-800 flex items-center">
+                <Loader className="w-4 h-4 animate-spin mr-2" />
+                Responding...
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -163,7 +166,8 @@ const AiCompanion = () => {
           className="flex-grow p-2 border rounded-lg"
         />
         <motion.button
-          // ... animation props ...
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleSend}
           disabled={loading}
           className="ml-3 p-2 bg-teal-500 text-white rounded-lg"

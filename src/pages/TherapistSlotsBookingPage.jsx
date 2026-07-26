@@ -166,7 +166,7 @@ export default function TherapistSlotsBookingPage() {
                       disabled={isSlotBooked || isBookingInProgress}
                       className={`group inline-flex items-center justify-center px-6 py-2 font-semibold rounded-md w-full sm:w-auto transition-all ${
                         isSlotBooked
-                          ? "bg-green-500 text-white cursor-not-allowed" // Style for a booked slot
+                          ? "bg-red-500 text-white cursor-not-allowed" // Style for a booked slot
                           : "bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-400" // Default booking style
                       }`}
                     >
