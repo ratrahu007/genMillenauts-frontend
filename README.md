@@ -1,89 +1,269 @@
+<div align="center">
 
-# GenMillenauts - Mental Wellness Platform
+# 🧠 GenMillenauts
+### AI-Powered Mental Wellness Platform
 
-## Problem Statement
+A production-ready full-stack mental wellness platform built using **Spring Boot**, **React**, **Azure AI Foundry**, **Docker**, and **Azure Container Apps**.
 
-In today's fast-paced world, mental health has become a critical concern, especially for the younger generation. Many individuals face significant barriers to accessing timely and effective mental health support. These challenges include the high cost of traditional therapy, the stigma associated with seeking help, and the difficulty of finding the right resources. GenMillenauts aims to bridge this gap by providing an accessible, affordable, and comprehensive mental wellness platform.
+<p align="center">
+    <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk">
+    <img src="https://img.shields.io/badge/Spring_Boot-3.x-success?style=for-the-badge&logo=springboot">
+    <img src="https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react">
+    <img src="https://img.shields.io/badge/Docker-Containerized-blue?style=for-the-badge&logo=docker">
+    <img src="https://img.shields.io/badge/Azure-Container_Apps-0078D4?style=for-the-badge&logo=microsoftazure">
+    <img src="https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql">
+</p>
 
-## Our Solution
+🌐 **Live Demo:** https://genmillenauts.social
 
-GenMillenauts is a revolutionary platform designed to empower individuals on their journey to mental well-being. We offer a dual-interface system that caters to both users seeking support and therapists offering their services. Our solution combines professional guidance with self-help tools and a supportive community, creating a holistic ecosystem for mental wellness.
+</div>
 
-## Key Features
+---
 
-### For Users
+# 📖 Overview
 
-- **Seamless Authentication:** Secure and easy-to-use login and registration system.
-- **Personalized Dashboard:** A central hub to track your mental wellness journey, including:
-    - **Stress & Mood Tracking:** Monitor your stress levels and mood patterns over time.
-    - **AI Companion:** Engage in supportive conversations with an AI-powered chatbot.
-    - **Journaling:** A private space to reflect on your thoughts and feelings.
-- **Connect with Professionals:**
-    - **Browse Therapists:** Find and view profiles of qualified therapists.
-    - **Book Appointments:** Easily schedule sessions with your chosen therapist.
-- **Community Support:** (Coming Soon) Connect with peers in a safe and moderated community.
+GenMillenauts is an AI-powered mental wellness platform designed to make mental healthcare more accessible and engaging.
 
-### For Therapists
+Users can connect with therapists, book appointments, attend video consultations, track their daily mood, monitor stress levels, and interact with an AI assistant for emotional support.
 
-- **Dedicated Portal:** A separate interface for therapists to manage their services.
-- **Profile Management:** Create and customize your professional profile.
-- **Availability Slots:** Set and manage your available time slots for sessions.
-- **Booking Management:** View and track your upcoming appointments.
+The application is fully containerized using Docker and deployed on Microsoft Azure using Azure Container Apps with Azure Database for MySQL.
 
-## Modules
+---
 
-### 1. User Module
+# 🚀 Project Highlights
 
-- **Authentication:** Handles user registration, login, and session management.
-- **Dashboard:** Provides an overview of the user's mental wellness journey.
-- **Booking:** Allows users to find and book appointments with therapists.
+- ✅ Production Ready
+- ✅ Dockerized Frontend & Backend
+- ✅ Azure Container Apps Deployment
+- ✅ Azure Database for MySQL
+- ✅ Azure AI Foundry Integration
+- ✅ JWT Authentication
+- ✅ Secure REST APIs
+- ✅ HTTPS Enabled
+- ✅ Custom Domain Configuration
+- ✅ Responsive React UI
 
-### 2. Therapist Module
+---
 
-- **Authentication:** A separate and secure authentication system for therapists.
-- **Dashboard:** A dedicated space for therapists to manage their profile, availability, and bookings.
+# 📸 Application Preview
 
-### 3. Booking & Scheduling Module
+| Home | User Dashboard |
+|------|------|
+| ![](screenshots/homepage.png) | ![](screenshots/userDashboard.png) |
 
-- **Slot Creation:** Enables therapists to create and manage their availability.
-- **Appointment Booking:** Handles the logic for users to book, view, and manage their appointments.
+| Therapist Dashboard | Slot Booking |
+|------|------|
+| ![](screenshots/therapistDashboard.png) | ![](screenshots/slot.png) |
 
-### 4. AI Module
+| AI Chat |
+|------|
+| ![](screenshots/Aichat.png) |
 
-- **AI Companion:** Integrates an AI-powered chatbot to provide immediate support and conversation.
+---
 
-### 5. Authentication Module
+# ✨ Features
 
-- **JWT-Based:** Utilizes JSON Web Tokens for secure and stateless authentication for both users and therapists.
+## 🔐 Authentication
 
-## Technologies Used
+- User Registration
+- Secure Login
+- JWT Authentication
+- BCrypt Password Encryption
+- Protected REST APIs
 
-- **Frontend:** React, Redux, Tailwind CSS
-- **Backend:** Java , SprinBoot
-- **Database:** My-SQl
-- **Authentication:** JWT
+---
 
-## Getting Started
+## 👨‍⚕️ Therapist Module
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/genmillenauts.git
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-4. **Open your browser** and navigate to `http://localhost:5173`.
+- Therapist Profiles
+- Experience & Specialization
+- Consultation Fee
+- Availability Management
+- Slot Management
 
+---
 
-## Contributing
+## 📅 Appointment Booking
 
-We welcome contributions from the community! If you'd like to contribute, please fork the repository and create a pull request.
+- View Available Slots
+- Book Appointment
+- Booking History
+- Cancel Booking
+- Booking Status
 
-## License
+---
 
-This project is licensed under the MIT License.
+## 🎥 Video Consultation
+
+- Online Video Consultation
+- Secure Session Access
+
+---
+
+## 😊 Mood Tracking
+
+- Daily Mood Logging
+- Emotional Monitoring
+
+---
+
+## 📊 Stress Tracking
+
+- Record Daily Stress
+- AI Assisted Support
+
+---
+
+## 🤖 AI Chat Assistant
+
+- Azure AI Foundry Integration
+- AI Powered Conversations
+- Emotional Wellness Support
+
+---
+
+# 🏗️ System Architecture
+
+<p align="center">
+<img src="docs/architecture.jpg" width="100%">
+</p>
+
+---
+
+# ☁️ Azure Deployment Architecture
+
+<p align="center">
+<img src="docs/deployment.png" width="100%">
+</p>
+
+---
+
+# 🛠️ Tech Stack
+
+## Backend
+
+- Java 17
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- JWT
+- Maven
+
+### Frontend
+
+- React
+- Vite
+- Redux Toolkit
+- Axios
+- CSS
+
+### Database
+
+- MySQL
+
+### AI
+
+- Azure AI Foundry
+
+### DevOps
+
+- Docker
+- Docker Hub
+- Azure Container Apps
+- Nginx
+
+### Cloud
+
+- Azure Database for MySQL
+- Azure DNS
+- HTTPS / SSL
+- Custom Domain
+
+---
+
+# 📂 Project Structure
+
+```
+GenMillenauts
+│
+├── frontend
+├── docs
+├── screenshots
+├── docker
+├── README.md
+└── LICENSE
+```
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/GenMillenauts.git
+```
+
+## Backend
+
+```bash
+cd backend
+mvn clean install
+mvn spring-boot:run
+```
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+# 🌍 Production Deployment
+
+| Service | Technology |
+|----------|------------|
+| Frontend | React + Nginx |
+| Backend | Spring Boot |
+| Containers | Docker |
+| Cloud | Azure Container Apps |
+| Database | Azure Database for MySQL |
+| AI | Azure AI Foundry |
+| Domain | genmillenauts.social |
+| HTTPS | SSL Enabled |
+
+---
+
+# 📈 Future Improvements
+
+- Google OAuth
+- Payment Gateway
+- Email Notifications
+- Admin Analytics
+- AI Mood Prediction
+- Mobile Application
+
+---
+
+# 👨‍💻 Author
+
+**Rahul Rathod**
+
+Java Full Stack Developer
+
+- GitHub: https://github.com/ratrahu007/
+- LinkedIn: www.linkedin.com/in/rahul-rathod-4742982a6
+
+---
+
+<div align="center">
+
+### ⭐ If you like this project, consider giving it a Star!
+
+Built with ❤️ using Java, Spring Boot, React & Microsoft Azure
+
+</div>
