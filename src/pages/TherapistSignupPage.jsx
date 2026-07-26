@@ -1,4 +1,3 @@
-// src/pages/TherapistSignupPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,6 +6,7 @@ import AuthCard from "../components/Auth/AuthCard";
 import OTPInput from "../components/Auth/OTPInput";
 import { toast } from "sonner";
 import vid from "../assets/AI_VID.mp4";
+import { ArrowRight, Mail, Phone, Info } from "lucide-react";
 
 const fadeSlide = {
   initial: { opacity: 0, y: 40 },
@@ -16,49 +16,29 @@ const fadeSlide = {
 };
 
 export default function TherapistSignupPage() {
-  // useState hook to manage the current step of the signup flow ('sendOtp', 'verifyOtp').
-  // This enables conditional rendering of different UI components.
   const [step, setStep] = useState("sendOtp");
-
-  // useState hook to store the user's input (email or mobile).
   const [inputValue, setInputValue] = useState("");
-
-  // useNavigate hook from react-router-dom to programmatically navigate between routes.
   const navigate = useNavigate();
-
-  // Custom hook 'useTherapistApi' encapsulates API logic for therapist authentication.
-  // It provides loading state and functions to interact with the backend.
   const { loading, sendOtp, verifyOtp } = useTherapistApi();
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!inputValue) {
-      toast.error("Please enter your email or mobile number.");
+      toast.error("Please enter your email or mobile number to begin.");
       return;
     }
-
-    // Logic to determine if the input is an email or a mobile number.
     const isEmail = inputValue.includes("@");
-    let payload;
-    if (isEmail) {
-      payload = { email: inputValue };
-    } else {
-      payload = { mobile: `+91${inputValue}` };
-    }
+    const payload = isEmail ? { email: inputValue } : { mobile: `+91${inputValue}` };
 
     try {
       await sendOtp(payload);
-      // Conditional rendering: Change the step to 'verifyOtp' on success.
       setStep("verifyOtp");
     } catch (error) {
-      // Error is already handled and toasted in the custom hook.
       console.error("Failed to send OTP from component:", error);
     }
   };
 
   const handleOtpVerified = () => {
-    // Programmatic navigation: On successful OTP verification, navigate to the registration page.
-    // We pass the email/mobile in the router's 'state' to avoid using URL params for sensitive data.
     navigate("/therapist/register", { state: { emailOrMobile: inputValue } });
   };
 
@@ -71,18 +51,17 @@ export default function TherapistSignupPage() {
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
         <AnimatePresence mode="wait">
-          {/* Conditional rendering based on the 'step' state. */}
           {step === "sendOtp" && (
             <motion.div key="sendOtp" {...fadeSlide}>
               <AuthCard
-                title="Therapist Signup"
-                subtitle="Enter your email or mobile to receive an OTP"
+                title="Join as a Therapist"
+                subtitle="Start your journey with us. Verify your email or mobile to get started."
               >
-                <form onSubmit={handleSendOtp} className="space-y-6">
-                  <div>
-                    <label htmlFor="contact" className="sr-only">
-                      Email or Mobile Number
-                    </label>
+                <form onSubmit={handleSendOtp} className="space-y-4">
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
+                      {inputValue.includes('@') ? <Mail /> : <Phone />}
+                    </span>
                     <input
                       id="contact"
                       name="contact"
@@ -90,17 +69,25 @@ export default function TherapistSignupPage() {
                       required
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full pl-10 pr-32 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                       placeholder="Email or Mobile Number"
                     />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="absolute right-1 top-1 bottom-1 flex items-center justify-center px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-semibold transition-all duration-300 ease-in-out disabled:bg-blue-400"
+                    >
+                      {loading ? <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div> : <ArrowRight className="w-5 h-5" />}
+                    </button>
                   </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition disabled:bg-blue-400"
-                  >
-                    {loading ? "Sending..." : "Send OTP"}
-                  </button>
+                  {!loading && (
+                    <div className="flex items-center justify-center gap-3 p-3 mt-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                      <Info className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                      <p className="text-shadow-blue-950 text-sm text-center">
+                        Enter your email  to receive an OTP.
+                      </p>
+                    </div>
+                  )}
                 </form>
               </AuthCard>
             </motion.div>
@@ -108,7 +95,6 @@ export default function TherapistSignupPage() {
 
           {step === "verifyOtp" && (
             <motion.div key="verifyOtp" {...fadeSlide}>
-              {/* Component Composition: Reusing the OTPInput component for the verification step. */}
               <OTPInput
                 formData={{ emailOrMobile: inputValue }}
                 onOtpVerified={handleOtpVerified}

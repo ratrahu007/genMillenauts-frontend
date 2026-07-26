@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Calendar, Clock, Video } from "lucide-react";
 import { useSelector } from "react-redux";
 
 const BookingList = ({ bookings }) => {
@@ -11,14 +11,10 @@ const BookingList = ({ bookings }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="text-center py-16 text-gray-400"
+        className="text-center py-12 text-gray-500"
       >
-        <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-          <div className="text-2xl font-semibold">🌿 No Sessions Yet</div>
-          <p className="text-sm mt-2">
-            Begin your wellness journey whenever you feel ready.
-          </p>
-        </motion.div>
+        <div className="text-xl font-semibold">🌿 No Upcoming Sessions</div>
+        <p className="text-sm mt-2">When you book a session, it will appear here.</p>
       </motion.div>
     );
   }
@@ -27,98 +23,65 @@ const BookingList = ({ bookings }) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="space-y-10"
+      transition={{ duration: 0.5 }}
+      className="space-y-4"
     >
       {bookings.map((booking, index) => (
         <motion.div
           key={booking.bookingId}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.08, type: "spring", stiffness: 70 }}
-          whileHover={{ scale: 1.025 }}
-          className="relative rounded-3xl p-[2px] bg-gradient-to-br 
-                     from-teal-300 via-blue-300 to-purple-300 shadow-xl"
+          transition={{ delay: index * 0.1 }}
+          className="bg-white p-5 rounded-xl shadow-sm border border-gray-200/80"
         >
-          {/* Glass Inner Card */}
-          <div
-            className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-7
-                       border border-white/40 shadow-lg"
-          >
-            {/* Floating Aura Glow */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              className="absolute -inset-5 rounded-3xl bg-gradient-to-br 
-                         from-teal-200/40 via-blue-200/40 to-purple-200/40 
-                         blur-3xl pointer-events-none"
-            />
-
-            {/* Header */}
-            <div className="relative z-10 flex items-center justify-between">
-              {/* User avatar */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br 
-                                from-blue-200 to-purple-200 flex items-center 
-                                justify-center shadow-inner">
-                  <UserCircle className="w-8 h-8 text-gray-700" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-xl text-gray-800 tracking-wide">
-                    {role === 'therapist' ? booking.userName : booking.therapistName}
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    {role === 'therapist' ? 'Session with Client' : `Specialty: ${booking.therapistSpeciality}`}
-                  </p>
-                </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                <UserCircle className="w-6 h-6 text-gray-500" />
               </div>
-
-              {/* Status */}
-              <span
-                className={`px-4 py-1 text-xs font-semibold rounded-full shadow-sm
-                ${
-                  booking.status === "CONFIRMED"
-                    ? "bg-green-100 text-green-700 border border-green-300"
-                    : "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                }`}
-              >
-                {booking.status}
-              </span>
+              <div>
+                <h3 className="font-semibold text-gray-800">
+                  {role === 'therapist' ? booking.userName : booking.therapistName}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {role === 'therapist' ? 'Client' : booking.therapistSpeciality}
+                </p>
+              </div>
             </div>
+            <span
+              className={`mt-3 sm:mt-0 px-3 py-1 text-xs font-semibold rounded-full ${
+                booking.status === "CONFIRMED"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {booking.status}
+            </span>
+          </div>
 
-            {/* Body */}
-            <div className="relative z-10 mt-6 text-gray-700 text-sm space-y-2">
-              <p>
-                📅 <span className="font-medium">{booking.slotDate}</span>
-              </p>
-              <p>
-                ⏰ <span className="font-medium">{booking.slotTime}</span>
-              </p>
+          <div className="mt-4 border-t border-gray-100 pt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 space-y-3 sm:space-y-0">
+            <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500" />
+                    <span>{booking.slotDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gray-500" />
+                    <span>{booking.slotTime}</span>
+                </div>
             </div>
-
-            {/* Jitsi Button */}
+            
             <motion.a
               href={booking.jitsiUrl}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ x: 6 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative z-10 mt-6 inline-block bg-gradient-to-r 
-                         from-teal-500 to-blue-500 text-white py-2 px-5 
-                         rounded-full font-semibold shadow-md text-sm
-                         hover:shadow-lg hover:opacity-95 transition"
+              className="inline-flex items-center gap-2 bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-colors hover:bg-blue-600"
             >
-              🌐 Join Live Session
+              <Video className="w-4 h-4" />
+              Join Session
             </motion.a>
-
-            {/* Therapist branding */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 0.5, y: 0 }}
-              className="absolute bottom-4 right-4 text-[10px] text-gray-500"
-            >
-              Powered by GenMillenauts Therapy
-            </motion.div>
           </div>
         </motion.div>
       ))}

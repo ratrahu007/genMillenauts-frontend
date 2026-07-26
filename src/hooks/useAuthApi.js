@@ -18,13 +18,16 @@ export const useAuthApi = () => {
   const navigate = useNavigate(); 
 
   const handleSendOtp = async (email) => {
+    dispatch(startLoading());
     try {
-      dispatch(startLoading());
       const data = await sendOtp(email);
       const success = data?.success === true;
       const message = data?.message || "Failed to send OTP";
-      if (success) toast.success(message);
-      else toast.error(message);
+      if (success) {
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
       return { success, message };
     } catch (err) {
       toast.error("Failed to send OTP");
@@ -37,20 +40,23 @@ export const useAuthApi = () => {
 
   const verifyOtp = async (data) => {
     const { emailOrMobile, otp } = data;
+    dispatch(startLoading());
     try {
-      dispatch(startLoading());
       const responseData = await verifyOtpService(emailOrMobile, otp);
-      const success = responseData?.success === true;
-      const message = responseData?.message || "OTP verification failed";
-      if (success) toast.success(message);
-      else toast.error(message);
-      return { success, message };
+      
+      if (responseData?.success !== true) {
+        const message = responseData?.message || "OTP verification failed";
+        toast.error(message);
+        throw new Error(message);
+      }
+
+      const message = responseData?.message || "OTP verified successfully";
+      toast.success(message);
+      return { success: true, message };
     } catch (err) {
-      const message =
-        err.response?.data?.message || "Failed to verify OTP";
-      toast.error(message);
+      const message = err.message || err.response?.data?.message || "Failed to verify OTP";
       dispatch(setError(message));
-      return { success: false, message };
+      throw err;
     } finally {
       dispatch(resetLoading());
     }
@@ -63,16 +69,14 @@ export const useAuthApi = () => {
     const response = await registerUser(payload);
     const data = response.data;
 
-    // ✅ Handle 4xx errors
     if (response.status >= 400) {
       const message =
         data?.message || "Registration failed. Please try again.";
-      toast.error(message); // toast right here
+      toast.error(message);
       dispatch(setError(message));
       return { success: false, message };
     }
 
-    // ✅ Success
     toast.success("User registered successfully");
     return { success: true, data };
   } catch (err) {
@@ -91,16 +95,13 @@ export const useAuthApi = () => {
     try {
       dispatch(startLoading());
 
-      // ✅ Step 1: Login to get token
       const loginRes = await loginUser(email, password);
 
       if (loginRes?.token) {
         toast.success("Login successful!");
 
-        // ✅ Step 2: Use that token to fetch full user profile
         const profile = await getMyProfile(loginRes.token);
 
-        // ✅ Step 3: Save both token + full profile in Redux & localStorage
         dispatch(
           authSuccess({
             token: loginRes.token,
@@ -109,7 +110,6 @@ export const useAuthApi = () => {
           })
         );
 
-        // ✅ Step 4: Redirect to dashboard
         navigate("/dashboard");
 
         return { success: true, data: profile };

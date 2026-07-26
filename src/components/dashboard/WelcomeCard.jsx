@@ -2,63 +2,64 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, PlusCircle, User, Smile } from "lucide-react";
+import { Calendar, PlusCircle, Smile, ArrowRight } from "lucide-react";
 
 const WelcomeCard = ({ profile, role }) => {
-
     const name = profile?.fullName || "User";
 
-    // Content for Therapists
     const therapistContent = (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
                 to="/therapist/slots"
-                className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 p-4 rounded-xl transition-all"
+                className="group bg-white/50 hover:bg-white p-4 rounded-lg transition-all border border-gray-200/80 shadow-sm"
             >
-                <Calendar className="w-6 h-6 text-teal-600" />
-                <div>
-                    <p className="font-semibold text-gray-800">View Slots</p>
-                    <p className="text-sm text-gray-500">See all your available and booked slots.</p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="font-semibold text-gray-800">View Slots</h3>
+                        <p className="text-sm text-gray-500">Manage your schedule</p>
+                    </div>
+                    <Calendar className="w-6 h-6 text-teal-500" />
                 </div>
             </Link>
-            <div // This is not a link, but a visual cue to the form below
-                className="flex items-center gap-3 bg-gray-100 p-4 rounded-xl"
+            <Link
+                to="/therapist/dashboard" // Assuming the create form is on the dashboard
+                className="group bg-white/50 hover:bg-white p-4 rounded-lg transition-all border border-gray-200/80 shadow-sm"
             >
-                <PlusCircle className="w-6 h-6 text-blue-600" />
-                <div>
-                    <p className="font-semibold text-gray-800">Create Slots</p>
-                    <p className="text-sm text-gray-500">Generate new availability for your clients.</p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="font-semibold text-gray-800">Create Slots</h3>
+                        <p className="text-sm text-gray-500">Add new availability</p>
+                    </div>
+                    <PlusCircle className="w-6 h-6 text-blue-500" />
                 </div>
-            </div>
+            </Link>
         </div>
     );
 
-    // Content for Regular Users
     const userContent = (
-        <div className="text-center md:text-left">
-            <p className="text-gray-600 mb-6">
-                Your mental wellness journey is important. We're here to support you every step of the way.
+        <div className="mt-6 text-center md:text-left">
+            <p className="text-gray-600 mb-4">
+                Your mental wellness journey is a path of strength. We're here to support you.
             </p>
-            <div className="flex justify-center md:justify-start items-center gap-2 bg-blue-50 text-blue-700 p-3 rounded-lg">
+            <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 p-3 rounded-lg font-medium"
+            >
                 <Smile className="w-5 h-5" />
-                <span className="font-medium">You're doing great, keep it up!</span>
-            </div>
+                <span>You're on the right track. Keep going!</span>
+            </motion.div>
         </div>
     );
-
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200"
+            className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-teal-50 p-8 rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         >
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome back, {name}!</h2>
-            <p className="text-gray-500 mb-6">Here's a summary of your dashboard.</p>
-            
-            {role === "therapist" ? therapistContent : userContent}
-            
+            <div className="relative z-10">
+                <h2 className="text-3xl font-bold text-gray-800">Welcome back, {name}!</h2>
+                <p className="text-gray-500 mt-1">Here's your wellness summary.</p>
+                {role === "therapist" ? therapistContent : userContent}
+            </div>
         </motion.div>
     );
 };

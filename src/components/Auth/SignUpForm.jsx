@@ -1,69 +1,63 @@
-// src/components/Auth/SignUpForm.jsx
-// This component represents the initial step of the user registration process.
-// Its primary purpose is to collect the user's email address and trigger the sending of a One-Time Password (OTP).
-// It uses `react-hook-form` for simple form management and the `useAuthApi` custom hook to interact with the backend OTP service.
-// Upon successful OTP dispatch, it invokes a callback function (`onOtpSent`) to notify the parent component,
-// which typically then transitions the view to an OTP input form.
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useAuthApi } from "../../hooks/useAuthApi";
+import AuthCard from "./AuthCard";
+import { ArrowRight, Info } from "lucide-react";
 
-// SignUpForm component: The first step in the registration flow, for sending an OTP.
 export default function SignUpForm({ onOtpSent }) {
-  // `react-hook-form` for managing the email input.
-  const { register, handleSubmit } = useForm();
-  
-  // Custom hook to access the OTP sending functionality.
-  // - `handleSendOtp`: The function that calls the API to send an OTP to the provided email.
-  // - `loading`: A boolean to indicate when the API call is in progress.
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { handleSendOtp, loading } = useAuthApi();
 
-  // This function is called upon form submission.
   const onSubmit = async (data) => {
-    // Basic validation to ensure an email is entered.
-    if (!data.email) {
-      alert("Please enter an email");
-      return;
-    }
-
-    // Call the API to send the OTP.
     const response = await handleSendOtp(data.email);
-    
-    // If the OTP is sent successfully, execute the callback function passed via props.
-    // This allows the parent component to proceed to the next step (e.g., show the OTP input form).
     if (response.success) {
       if (onOtpSent) onOtpSent(data.email);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="bg-white shadow-lg p-6 rounded-2xl w-96"
+    <AuthCard
+      title="Welcome to GenMillenauts"
+      subtitle="Your journey to wellness starts here. Enter your email to proceed."
     >
-      <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
-
-      <input
-        type="email"
-        placeholder="Email"
-        {...register("email")}
-        required
-        disabled={loading} // Disable input while the API call is in progress.
-        className="w-full mb-3 p-2 border rounded-md"
-      />
-
-      <button
-        type="submit"
-        disabled={loading} // Disable the button during the API call.
-        className={`w-full py-2 rounded-md transition ${
-          loading
-            ? "bg-gray-400 text-gray-200 cursor-not-allowed" // Loading state style.
-            : "bg-blue-600 text-white hover:bg-blue-700"  // Default style.
-        }`}
-      >
-        {loading ? "Sending OTP..." : "Send OTP"}
-      </button>
-    </form>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="relative flex items-center">
+          <input
+            type="email"
+            placeholder="you@example.com"
+            {...register("email", { 
+              required: "An email is required to sign in.", 
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: "Please enter a valid email address."
+              }
+            })}
+            disabled={loading}
+            className="w-full pl-4 pr-32 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="absolute right-1 top-1 bottom-1 flex items-center justify-center px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-semibold transition-all duration-300 ease-in-out disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
+            ) : (
+              <ArrowRight className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+        {errors.email && <p className="text-red-400 text-sm px-1">{errors.email.message}</p>}
+        
+        {!loading && (
+          <div className="flex items-center justify-center gap-3 p-3 mt-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
+            <Info className="w-5 h-5 text-blue-400 flex-shrink-0" />
+            <p className="text-shadow-blue-950 text-sm text-center">
+              Enter your email to receive an OTP.
+            </p>
+          </div>
+        )}
+      </form>
+    </AuthCard>
   );
 }

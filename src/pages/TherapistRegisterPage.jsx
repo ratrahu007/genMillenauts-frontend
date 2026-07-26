@@ -1,4 +1,3 @@
-// src/pages/TherapistRegisterPage.jsx
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,6 +5,7 @@ import { useTherapistApi } from "../hooks/useTherapistApi";
 import AuthCard from "../components/Auth/AuthCard";
 import { toast } from "sonner";
 import vid from "../assets/AI_VID.mp4";
+import { User, Briefcase, Building, DollarSign, Info, Lock, Eye, EyeOff } from "lucide-react";
 
 const fadeSlide = {
   initial: { opacity: 0, y: 40 },
@@ -13,20 +13,37 @@ const fadeSlide = {
   transition: { duration: 0.6, ease: "easeOut" },
 };
 
+const InputField = ({ icon, placeholder, name, value, onChange, required, type = "text", as = "input", togglePassword, showPassword }) => {
+  const commonProps = {
+    name,
+    placeholder,
+    required,
+    value,
+    onChange,
+    type,
+    className: "w-full pl-10 pr-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition",
+  };
+  const AsComponent = as;
+  return (
+    <div className="relative">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">{icon}</div>
+      <AsComponent {...commonProps} />
+      {name === 'password' && (
+        <button type="button" onClick={togglePassword} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-white">
+          {showPassword ? <EyeOff /> : <Eye />}
+        </button>
+      )}
+    </div>
+  );
+};
+
 export default function TherapistRegisterPage() {
-  // useLocation hook from react-router-dom to access the state passed during navigation.
-  // This is a secure way to pass data between routes without exposing it in the URL.
   const location = useLocation();
   const emailOrMobile = location.state?.emailOrMobile;
-
-  // useNavigate hook for programmatic navigation after registration.
   const navigate = useNavigate();
-
-  // Custom hook for API interactions.
   const { loading, register } = useTherapistApi();
+  const [showPassword, setShowPassword] = useState(false);
 
-  // useState hook to manage the form's state. Using a single state object for all form fields
-  // makes it easier to manage and pass to the registration function. This is a controlled component pattern.
   const [formData, setFormData] = useState({
     fullName: "",
     specialization: "",
@@ -36,8 +53,6 @@ export default function TherapistRegisterPage() {
     password: "",
   });
 
-  // This function handles changes in all form inputs.
-  // It uses the input's 'name' attribute to update the corresponding key in the 'formData' state.
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -51,22 +66,18 @@ export default function TherapistRegisterPage() {
       return;
     }
 
-    // Construct the final payload for the registration API.
     let payload = { ...formData };
-
-if (emailOrMobile.includes("@")) {
-  payload.email = emailOrMobile;   // user signed up using email
-} else {
-  payload.mobile = emailOrMobile;  // user signed up using mobile
-}
-
+    if (emailOrMobile.includes("@")) {
+      payload.email = emailOrMobile;
+    } else {
+      payload.mobile = emailOrMobile;
+    }
 
     try {
       await register(payload);
-      // On successful registration, navigate the user to the login page.
+      toast.success("Registration complete! Welcome to the platform.");
       navigate("/therapist/login");
     } catch (error) {
-      // Errors are toasted in the custom hook.
       console.error("Registration failed from component:", error);
     }
   };
@@ -80,70 +91,37 @@ if (emailOrMobile.includes("@")) {
 
       <motion.div key="register" {...fadeSlide} className="relative z-10">
         <AuthCard
-          title="Therapist Registration"
-          subtitle="Complete your professional profile"
+          title="Create Your Professional Profile"
+          subtitle="These details will be visible to clients seeking your expertise."
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Each input is a controlled component, its value is tied to the component's state. */}
-            <input
-              name="fullName"
-              type="text"
-              placeholder="Full Name"
-              required
-              value={formData.fullName}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField icon={<User />} name="fullName" placeholder="Full Name" required value={formData.fullName} onChange={handleChange} />
+              <InputField icon={<Briefcase />} name="specialization" placeholder="Specialization" required value={formData.specialization} onChange={handleChange} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField icon={<Building />} name="city" placeholder="City" required value={formData.city} onChange={handleChange} />
+              <InputField icon={<DollarSign />} name="sessionPrice" type="number" placeholder="Price per Session" required value={formData.sessionPrice} onChange={handleChange} />
+            </div>
+            <InputField icon={<Info />} name="bio" placeholder="A brief bio about your practice and experience" required value={formData.bio} onChange={handleChange} as="textarea" />
+            <InputField 
+              icon={<Lock />} 
+              name="password" 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Password" 
+              required 
+              value={formData.password} 
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
+              togglePassword={() => setShowPassword(!showPassword)}
+              showPassword={showPassword}
             />
-            <input
-              name="specialization"
-              type="text"
-              placeholder="Specialization (e.g., CBT, Family Therapy)"
-              required
-              value={formData.specialization}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              name="city"
-              type="text"
-              placeholder="City"
-              required
-              value={formData.city}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              name="sessionPrice"
-              type="number"
-              placeholder="Session Price"
-              required
-              value={formData.sessionPrice}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
-            />
-            <textarea
-              name="bio"
-              placeholder="Bio (e.g., 5 years experience)"
-              required
-              value={formData.bio}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500"
-            />
+            
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition disabled:bg-blue-400"
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-transform transform hover:scale-105 disabled:bg-blue-400"
             >
-              {loading ? "Registering..." : "Complete Registration"}
+              {loading ? "Finalizing Registration..." : "Complete Registration"}
             </button>
           </form>
         </AuthCard>

@@ -1,86 +1,107 @@
-// src/components/Auth/OTPInput.jsx
-// This component provides a user interface for entering and verifying a One-Time Password (OTP).
-// It is designed to be a reusable part of a multi-step authentication flow (e.g., after signup or for password resets).
-// It takes a formData object (containing email/mobile), an API function for verification, and a success callback as props.
-// The component handles form state, basic validation, and displays loading and error messages.
-
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useRef, useEffect } from "react";
 import AuthCard from "./AuthCard";
+import { toast } from "sonner";
 
-// OTPInput component: A form for submitting an OTP for verification.
-export default function OTPInput({
-  formData,      // Data from the previous step, typically containing the user's email or mobile.
-  onOtpVerified, // A callback function to execute upon successful OTP verification.
-  apiFn,         // The API function to call for OTP verification.
-  loading,       // A boolean indicating if the verification API call is in progress.
-}) {
-  // `react-hook-form` for managing the OTP input field.
-  const { register, handleSubmit } = useForm();
-  // State to hold and display any verification errors.
+const OTP_LENGTH = 6;
+
+export default function OTPInput({ formData, onOtpVerified, apiFn, loading }) {
+  const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState("");
+  const inputsRef = useRef([]);
 
-  // Handles the form submission.
-  const onSubmit = async (data) => {
-    const { otp } = data;
-    const emailOrMobile = formData.emailOrMobile;
+  useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
 
-    // Basic validation to ensure OTP and contact info are present.
-    if (!otp) {
-      setError("Please enter OTP.");
+  const handleChange = (element, index) => {
+    const value = element.value;
+    if (isNaN(value)) return; // Allow only numbers
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1); // Take only the last digit
+    setOtp(newOtp);
+
+    // Move to the next input
+    if (value && index < OTP_LENGTH - 1) {
+      inputsRef.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    // Move to the previous input on backspace
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputsRef.current[index - 1].focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const paste = e.clipboardData.getData("text");
+    if (paste.length === OTP_LENGTH && !isNaN(paste)) {
+      const newOtp = paste.split('');
+      setOtp(newOtp);
+      inputsRef.current[OTP_LENGTH - 1].focus();
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const enteredOtp = otp.join("");
+    if (enteredOtp.length !== OTP_LENGTH) {
+      setError("Please fill all OTP fields.");
       return;
     }
-    if (!emailOrMobile) {
-      setError("Missing contact information for verification.");
-      return;
-    }
-
-    setError(""); // Clear previous errors.
+    setError("");
 
     try {
-      // Call the provided API function with the contact info and OTP.
-      await apiFn({ emailOrMobile, otp });
-      // If the API call is successful, trigger the success callback.
+      await apiFn({ emailOrMobile: formData.emailOrMobile, otp: enteredOtp });
+      toast.success("Verification successful!");
       onOtpVerified();
     } catch (err) {
-      // The API hook already shows a toast notification, but we can log and set a local error message.
-      console.error("OTP verification failed in component:", err);
-      setError(err.response?.data?.message || "Invalid OTP.");
+      setError(err.response?.data?.message || "Invalid or expired OTP.");
+      setOtp(new Array(OTP_LENGTH).fill(""));
+      inputsRef.current[0].focus();
     }
   };
 
   return (
-    // Wraps the form in a consistent, styled authentication card.
     <AuthCard
-      title="Verify Your Code"
-      subtitle={`An OTP has been sent to ${formData.emailOrMobile}`}
+      title="Check Your Email"
+      subtitle={`We sent a secure code to ${formData.emailOrMobile}`}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <label htmlFor="otp" className="sr-only">
-            OTP
-          </label>
-          <input
-            id="otp"
-            type="text"
-            placeholder="Enter 6-digit OTP"
-            // Registers the input with validation rules.
-            {...register("otp", { required: true, minLength: 6, maxLength: 6 })}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none text-center tracking-widest"
-          />
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="flex justify-center gap-2 sm:gap-3" onPaste={handlePaste}>
+          {otp.map((data, index) => (
+            <input
+              key={index}
+              ref={(el) => (inputsRef.current[index] = el)}
+              type="text"
+              maxLength="1"
+              value={data}
+              onChange={(e) => handleChange(e.target, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              onFocus={(e) => e.target.select()}
+              className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-semibold text-white bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          ))}
         </div>
 
-        {/* Display validation or API errors. */}
-        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+        {error && <p className="text-red-400 text-sm text-center -mt-4">{error}</p>}
 
-        {/* Submit button that shows a loading state. */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition disabled:bg-blue-400"
+          className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-transform transform hover:scale-105 disabled:bg-blue-400"
         >
           {loading ? "Verifying..." : "Verify & Proceed"}
         </button>
+
+        <div className="text-center text-sm text-gray-400">
+          Didn't receive the code?{" "}
+          <button type="button" className="font-semibold text-blue-400 hover:text-blue-300">
+            Resend
+          </button>
+        </div>
       </form>
     </AuthCard>
   );

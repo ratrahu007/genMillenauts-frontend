@@ -42,7 +42,11 @@ export const getLatestStress = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue(data.message || "Failed to fetch latest stress");
       }
-      return data;
+      return {
+        stress_level: data.stressIndex,
+        mood: data.mood,
+        time: data.time,
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -55,7 +59,7 @@ export const getWeeklyStress = createAsyncThunk(
     try {
       const { token } = getState().auth;
       const response = await fetch(
-      "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/stress/weekly",
+        "https://genmillenauts.happyfield-fc9e256d.centralindia.azurecontainerapps.io/api/ai/stress/weekly",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,7 +70,11 @@ export const getWeeklyStress = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue(data.message || "Failed to fetch weekly stress");
       }
-      return data;
+      return data.map(item => ({
+        date: item.date,
+        avg_stress_level: item.averageStress,
+        overallMood: item.overallMood,
+      }));
     } catch (error) {
       return rejectWithValue(error.message);
     }
